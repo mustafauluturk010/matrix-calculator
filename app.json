@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "Matris Hesaplama Makinesi",
+    "slug": "matrishesap",
+    "version": "1.0.1",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F3F1EC"
+    },
+    "assetBundlePatterns": [
+      "assets/icon.png",
+      "assets/adaptive-icon.png",
+      "assets/splash-icon.png",
+      "assets/favicon.png"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mustafa.hesap",
+      "buildNumber": "1.0.1"
+    },
+    "android": {
+      "package": "com.mustafa.hesap",
+      "versionCode": 1002,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F3F1EC"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "buildArchs": [
+              "armeabi-v7a",
+              "arm64-v8a"
+            ],
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "buildToolsVersion": "36.0.0",
+            "enableMinifyInReleaseBuilds": true
+          }
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-6540289804187833~6429234981",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "aed2f6f2-f319-40e5-b34d-c515fee2f36c"
+      }
+    },
+    "owner": "mustafauluturk"
+  }
+}
