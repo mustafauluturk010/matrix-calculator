@@ -403,13 +403,3 @@ Statistics student interested in:
 
 GitHub:
 https://github.com/mustafauluturk010
-
-## License
-
-This project is proprietary and all rights are reserved.
-
-The source code is publicly available for portfolio and educational purposes only.
-
-Copying, modifying, redistributing, or using this source code or substantial parts of it in other applications is not permitted without prior permission from the author.
-
-For the official version of the application, please use the Google Play Store.
