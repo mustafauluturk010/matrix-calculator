@@ -42,7 +42,7 @@ Features include:
 
 ### Linear Systems
 
-Systems in the form
+Systems in the form:
 
 ```text
 Ax = b
@@ -63,7 +63,7 @@ The solver also detects:
 
 One of the main features of the project is its symbolic calculation engine.
 
-The calculator can work with expressions containing rational numbers, π and square roots.
+The calculator can work with expressions containing rational numbers, π, and square roots.
 
 Examples:
 
@@ -225,7 +225,7 @@ The application includes:
 
 ```text
 matrix-calculator/
-│
+
 ├── App.tsx
 ├── app.json
 ├── babel.config.js
@@ -251,6 +251,7 @@ Some of the core modules include:
 
 ```text
 src/utils/
+
 ├── matrixUtils.ts
 ├── complexOps.ts
 ├── complexField.ts
@@ -346,18 +347,18 @@ Most mathematical operations return a structured result containing:
 * Error information when necessary
 * Calculation steps
 
-This allows the same calculation logic to be used by the UI, tests, PDF export and other parts of the application.
+This allows the same calculation logic to be used by the UI, tests, PDF export, and other parts of the application.
 
 ## Current Limitations
 
 Some features have intentionally defined limits.
 
 * Matrix size is currently limited to 6×6.
-* Symbolic calculations focus on rational numbers, π and square roots.
+* Symbolic calculations focus on rational numbers, π, and square roots.
 * Cube roots and arbitrary symbolic constants are not currently supported.
 * Some complex symbolic expressions fall back to numerical calculation.
 * Very complex symbolic expressions may fall back to numerical calculations.
-* Some symbolic RREF, Gaussian elimination and LU operations may fall back to numerical calculation when intermediate expressions become too complex.
+* Some symbolic RREF, Gaussian elimination, and LU operations may fall back to numerical calculation when intermediate expressions become too complex.
 
 These fallbacks are intended to keep calculations practical and avoid displaying unreliable symbolic results.
 
@@ -380,13 +381,20 @@ Camera-based matrix recognition is not currently included.
 
 A future version could use a camera or image picker together with an OCR system to recognize a matrix from an image and convert it into the application's matrix input format.
 
+## Official App
+
+The official version of Matrix Calculator is available on Google Play.
+
+**Download Matrix Calculator from Google Play:**
+https://play.google.com/store/apps/details?id=com.mustafa.hesap
+
 ## About the Project
 
-This project was developed as a practical combination of mathematics, statistics and software development.
+This project was developed as a practical combination of mathematics, statistics, and software development.
 
-Instead of relying entirely on external mathematical libraries, several parts of the calculation engine were implemented specifically for the project, including matrix operations, symbolic expressions, fractions, complex numbers, eigenvalue calculations and step-by-step solution generation.
+Instead of relying entirely on external mathematical libraries, several parts of the calculation engine were implemented specifically for the project, including matrix operations, symbolic expressions, fractions, complex numbers, eigenvalue calculations, and step-by-step solution generation.
 
-The project is also an ongoing way to explore TypeScript, React Native, testing and software architecture.
+The project is also an ongoing way to explore TypeScript, React Native, testing, and software architecture.
 
 ## Author
 
@@ -403,3 +411,13 @@ Statistics student interested in:
 
 GitHub:
 https://github.com/mustafauluturk010
+
+## License
+
+This project is proprietary and all rights reserved.
+
+The source code is publicly available for portfolio and educational purposes only.
+
+Copying, modifying, redistributing, or using this source code or substantial parts of it in other applications is not permitted without prior permission from the author.
+
+For the official version of the application, please use the Google Play Store.
