@@ -24,15 +24,12 @@ export interface LuStepInput {
   lang: LanguageCode;
   n: number;
   A: LuMat;
-  /** Nihai permütasyon matrisi (0/1) */
   P: MatrixData;
-  /** PA = P·A (satırları permüte edilmiş A) */
   PA: LuMat;
   L: LuMat;
   U: LuMat;
   /** Her adımdaki pivot adayları (i. sütunun i. satırdan itibaren değerleri, etiketli) */
   candidates: string[][];
-  /** Yapılan satır değişimleri (adım sırasıyla) */
   swaps: LuSwapInfo[];
   /** true: pivot = mutlak değerce en büyük aday; false: başka bir kural (sembolik) */
   maxAbs: boolean;
@@ -94,7 +91,6 @@ export function buildLuSteps(inp: LuStepInput): SolutionStep[] {
       });
     }
 
-    // U'nun i. satırı
     const lines: string[] = [];
     if (!sw && n > 1 && i < n - 1 && cand.length > 1) {
       lines.push(
@@ -113,7 +109,6 @@ export function buildLuSteps(inp: LuStepInput): SolutionStep[] {
         lines.push(`U[${i + 1}][${j + 1}] = ${a} − (${terms}) = ${uij}`);
       }
     }
-    // L'nin i. sütunu
     for (let r = i + 1; r < n; r++) {
       const a = PA.lab[r][i];
       const lri = L.lab[r][i];
@@ -137,7 +132,6 @@ export function buildLuSteps(inp: LuStepInput): SolutionStep[] {
     });
   }
 
-  // Nihai matrisler: P, PA, L, U
   steps.push({
     title: tr ? 'Permütasyon matrisi P' : 'Permutation matrix P',
     description: tr

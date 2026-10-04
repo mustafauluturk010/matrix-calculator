@@ -9,9 +9,6 @@ import { OperationResult, MatrixData } from '@/types';
 import { formatNumber, formatNumberWithRadical, NumberDisplayMode } from './numberFormat';
 import { mathLabelToHtml } from './mathLabel';
 
-// Shared PDF create/open/share/download logic for the current result (ResultDisplay) and for
-// history entries (HistoryScreen/HistoryDetailModal).
-
 function matrixToText(m: MatrixData, mode: NumberDisplayMode, labels?: string[][]): string {
   return m.map((row, i) => row.map((v, j) => labels?.[i]?.[j] ?? formatNumber(v, mode)).join('\t')).join('\n');
 }
@@ -44,7 +41,6 @@ export function buildPlainTextSummary(result: OperationResult, operationLabel: s
 export function buildHtmlReport(result: OperationResult, operationLabel: string, mode: NumberDisplayMode = 'decimal'): string {
   const fmt = (v: number) => formatNumber(v, mode);
   const fmtR = (v: number) => formatNumberWithRadical(v, mode);
-  // PDF'te kesirler yığılmış (pay/kesir çizgisi/payda) ve kökler üstü çizgili çizilir.
   const h = mathLabelToHtml;
   const matrixHtml = (m: MatrixData, labels?: string[][]) =>
     `<table style="border-collapse:collapse;margin:8px 0;">${m
@@ -97,16 +93,11 @@ export function buildHtmlReport(result: OperationResult, operationLabel: string,
   return `<!DOCTYPE html><html><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head><body style="font-family:-apple-system,Roboto,'Segoe UI',Helvetica,Arial,'Noto Sans',sans-serif;padding:20px;">${body}</body></html>`;
 }
 
-/**
- * PDF'i doğrudan cihazın yerel önizleme/yazdırma arayüzünde AÇAR
- * (kaydetmeden/paylaşmadan sadece görüntüleme). Hem iOS hem Android'de
- * expo-print'in yerleşik önizleme diyaloğu kullanılır.
- */
+/** Hem iOS hem Android'de expo-print'in yerleşik önizleme diyaloğunu kullanır (kaydetmez/paylaşmaz). */
 export async function openPdf(html: string): Promise<void> {
   await Print.printAsync({ html });
 }
 
-/** PDF'i sistem paylaşım sayfası üzerinden paylaşır. */
 export async function sharePdf(html: string): Promise<void> {
   const { uri } = await Print.printToFileAsync({ html });
   if (await Sharing.isAvailableAsync()) {

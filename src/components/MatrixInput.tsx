@@ -12,20 +12,15 @@ import {
   numberToInputText,
 } from '@/utils/numberFormat';
 
-// Dynamic rows x cols grid of TextInput cells with decimal and negative number input.
-// The keyboard "next" key moves focus to the next cell.
-
 interface MatrixInputProps {
   label: string;
   rows: number;
   cols: number;
   value: MatrixData;
   onChange: (data: MatrixData) => void;
-  /**
-   * Hücrelerin HAM giriş metni her değiştiğinde (yazma, boyut değişimi,
-   * yükleme) bildirilir. Sembolik motor (√2, pi/2 gibi girişleri tam
-   * hesaplamak için) sayısal `value` yerine bu metinlere ihtiyaç duyar.
-   */
+  /** Hücrelerin ham giriş metni her değiştiğinde bildirilir (yazma, boyut değişimi, yükleme).
+   * Sembolik motor, √2 / pi/2 gibi girişleri tam hesaplamak için sayısal `value` yerine bunlara
+   * ihtiyaç duyar. */
   onTextsChange?: (texts: string[][]) => void;
   theme: AppTheme;
   editable?: boolean;
@@ -35,7 +30,6 @@ interface MatrixInputProps {
    * overwrite the input (e.g. a trailing "." in "1.").
    */
   syncKey?: string | number;
-  /** KARMAŞIK SAYI MODU: hücreler `3+2i` gibi girişleri kabul eder; `i` düğmesi görünür. */
   complexMode?: boolean;
   /**
    * On syncKey change, if the dimensions match, these raw texts are used instead of
@@ -84,17 +78,12 @@ export default function MatrixInput({
   const inputRefs = useRef<Array<Array<TextInput | null>>>([]);
   // Son odaklanılan hücre: π / √ / i düğmeleri buraya ekler.
   const [lastFocus, setLastFocus] = useState<{ i: number; j: number } | null>(null);
-  // Her hücrenin SON BİLİNEN imleç/seçim aralığı (ref: her karakter yazımında
-  // yeniden render tetiklemesin diye state değil ref kullanılır). Kullanıcı
-  // hücreye odaklandığında (selectTextOnFocus) ya da metnin içine dokunup
-  // imleci taşıdığında güncellenir; sembol düğmeleri metnin SONUNA değil BU
-  // konuma eklenir.
+  // Her hücrenin son bilinen imleç/seçim aralığı. Her karakter yazımında yeniden render
+  // tetiklemesin diye state değil ref; sembol düğmeleri metnin sonuna değil bu konuma ekler.
   const selectionRef = useRef<Record<string, { start: number; end: number }>>({});
-  // Bir sembol eklendikten hemen sonra imleci eklenen sembolün TAM ARDINA
-  // taşımak için tek seferlik "zorlanmış seçim". Uygulandıktan kısa süre
-  // sonra temizlenir, aksi halde kullanıcının sonraki dokunuşlarıyla çakışır
-  // (React Native'de `selection` prop'u sürekli kontrollü tutmak, OS'un kendi
-  // imleç hareketiyle çakışan bilinen bir sorun).
+  // Sembol eklendikten sonra imleci sembolün hemen ardına taşımak için tek seferlik zorlanmış
+  // seçim. Kısa süre sonra temizlenir: `selection` prop'unu sürekli kontrollü tutmak React
+  // Native'de OS'un kendi imleç hareketiyle çakışır.
   const [pendingSelection, setPendingSelection] = useState<{ i: number; j: number; pos: number } | null>(null);
 
   useEffect(() => {
@@ -137,9 +126,6 @@ export default function MatrixInput({
   }, [rows, cols]);
 
   useEffect(() => {
-    // syncKey değiştiğinde (dışarıdan bir matris "yüklendiğinde") state'i
-    // gelen `value` prop'u ile TAMAMEN eşitle. syncKey verilmediyse bu
-    // etkisiz kalır (normal serbest kullanıcı yazımı bozulmaz).
     if (syncKey === undefined) return;
     const useTexts =
       syncTexts !== undefined && syncTexts.length === rows && syncTexts.every((r) => r.length === cols);
@@ -154,9 +140,8 @@ export default function MatrixInput({
   }, [syncKey]);
 
   function handleCellChange(text: string, i: number, j: number) {
-    // Sayı VEYA kesir (ör. "3/4", "-1/2") girişine izin ver. Karakter
-    // filtreleme ve kesir/ondalık ayrıştırma mantığı numberFormat.ts'te
-    // paylaşılıyor (skaler ve b vektörü alanlarıyla aynı davranış).
+    // Karakter filtreleme ve kesir/ondalık ayrıştırma numberFormat.ts'te paylaşılır
+    // (skaler ve b vektörü alanlarıyla aynı davranış).
     const sanitized = sanitizeFractionalInputText(text, complexMode);
     const newCellText = cellText.map((row) => [...row]);
     newCellText[i][j] = sanitized;

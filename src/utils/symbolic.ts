@@ -59,10 +59,6 @@ export type SymNum = readonly Term[];
 
 const MAX_ROOT = 1e12;
 
-// ------------------------------------------------------------
-// Rasyonel aritmetik (taşma korumalı)
-// ------------------------------------------------------------
-
 function safe(x: number): number {
   if (!Number.isSafeInteger(x)) throw new SymOverflowError();
   return x;
@@ -175,10 +171,6 @@ function qMul(a: Q, b: Q): Q {
   return qMake(iMul(iDivExact(a.n, g1), iDivExact(b.n, g2)), iMul(iDivExact(a.d, g2), iDivExact(b.d, g1)));
 }
 
-// ------------------------------------------------------------
-// Kare-çarpansız ayrıştırma:  n = s² · r  (r kare-çarpansız)
-// ------------------------------------------------------------
-
 function squareFreeSplit(n: number): { s: number; r: number } {
   if (!Number.isSafeInteger(n) || n < 1 || n > MAX_ROOT) throw new SymOverflowError();
   let rem = n;
@@ -197,10 +189,6 @@ function squareFreeSplit(n: number): { s: number; r: number } {
   r *= rem; // kalan (varsa) asal çarpan, kuvveti 1
   return { s, r };
 }
-
-// ------------------------------------------------------------
-// Terim ve SymNum işlemleri
-// ------------------------------------------------------------
 
 const termKey = (t: Term) => `${t.p}|${t.r}`;
 
@@ -250,7 +238,6 @@ export function symIsZero(a: SymNum): boolean {
   return a.length === 0;
 }
 
-/** π veya kök içeren (yani rasyonel OLMAYAN) bir terim var mı? */
 export function symIsIrrational(a: SymNum): boolean {
   return a.some((t) => t.p !== 0 || t.r !== 1);
 }
@@ -287,7 +274,6 @@ function withoutPi(a: SymNum): SymNum {
   return a.map((t) => ({ c: t.c, p: 0, r: t.r }));
 }
 
-/** r'nin en küçük asal çarpanı (r ≥ 2). */
 function smallestPrimeFactor(r: number): number {
   for (let i = 2; i * i <= r; i++) if (r % i === 0) return i;
   return r;
@@ -522,10 +508,6 @@ export function symToNumber(a: SymNum): number {
   return sum;
 }
 
-// ------------------------------------------------------------
-// Metin gösterimi
-// ------------------------------------------------------------
-
 const SUPERSCRIPT: Record<number, string> = { 2: '²', 3: '³' };
 const piText = (k: number) => (k === 1 ? 'π' : SUPERSCRIPT[k] ? `π${SUPERSCRIPT[k]}` : `π^${k}`);
 const piLatex = (k: number) => (k === 1 ? '\\pi' : `\\pi^{${k}}`);
@@ -647,7 +629,6 @@ function termLatexAbs(t: Term): string {
   return den ? `\\frac{${num || '1'}}{${den}}` : num || '1';
 }
 
-/** LaTeX gösterimi (matematik modu içinde kullanılır). */
 export function symToLatex(a: SymNum): string {
   if (a.length === 0) return '0';
   let out = '';
@@ -725,10 +706,6 @@ function matchParen(s: string, start: number): number {
   }
   return -1;
 }
-
-// ------------------------------------------------------------
-// Giriş metnini ayrıştırma
-// ------------------------------------------------------------
 
 /**
  * "123", "0,37", ".5" gibi bir ondalık sayıyı TAM rasyonel olarak okur
@@ -1079,10 +1056,6 @@ export function parseSymbolicInput(text: string): SymNum | null {
     return null;
   }
 }
-
-// ------------------------------------------------------------
-// KARMAŞIK giriş (a + bi): karmaşık sayı modu
-// ------------------------------------------------------------
 
 /** Kesin karmaşık sayı: re + im·i (re, im birer SymNum). */
 export interface SymCx {

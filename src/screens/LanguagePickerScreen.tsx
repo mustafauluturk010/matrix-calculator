@@ -3,9 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-na
 import { useAppStore } from '@/store/useAppStore';
 import { getTheme } from '@/theme/theme';
 
-// Full-screen language selection shown on first launch. Once a language is chosen,
-// `languageSelected` becomes true in the store and App.tsx switches to normal navigation.
-
 export default function LanguagePickerScreen() {
   const themeMode = useAppStore((s) => s.themeMode);
   const setLanguage = useAppStore((s) => s.setLanguage);

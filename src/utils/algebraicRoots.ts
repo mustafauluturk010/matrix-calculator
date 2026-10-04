@@ -10,7 +10,6 @@
 import type { Field } from './complexField';
 import type { C } from './complexEigen';
 
-// ---------- BigInt rasyonel ----------
 export type Q = { n: bigint; d: bigint };
 const babs = (a: bigint) => (a < 0n ? -a : a);
 function gcd(a: bigint, b: bigint): bigint {
@@ -68,7 +67,6 @@ function qRoot(a: Q, k: 2 | 3): Q | null {
   return q(sg * rn, rd);
 }
 
-// ---------- metin yardımcıları ----------
 const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 export const sup = (k: number) => String(k).split('').map((c) => SUP[+c]).join('');
 const SUB = '₀₁₂₃₄₅₆₇₈₉';
@@ -219,7 +217,6 @@ export function cubicClosedForms(c3: Q, c2: Q, c1: Q, c0: Q): ClosedForm[] | nul
   return null; // D = 0: rasyonel kök var (çağıran taraf zaten ayrıştırmış olmalı)
 }
 
-// ---------- polinom (alan üzerinde) ----------
 type Poly<T> = T[]; // düşük dereceden yükseğe
 
 function trim<T>(F: Field<T>, p: Poly<T>): Poly<T> {

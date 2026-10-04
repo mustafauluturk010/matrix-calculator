@@ -9,9 +9,6 @@ import HistoryDetailModal from '@/components/HistoryDetailModal';
 import { HistoryEntry } from '@/types';
 import { formatNumber, formatNumberWithRadical, NumberDisplayMode } from '@/utils/numberFormat';
 
-// Normal mode: each history entry opens HistoryDetailModal. Select mode shows checkboxes with
-// "select all" and "delete selected" for bulk actions.
-
 // Formats eigenvalues/eigenvectors with the current display mode and prefers radical
 // expressions when available, so the list matches the detail screen.
 function summarizeResult(entry: HistoryEntry, t: (k: any) => string, mode: NumberDisplayMode): string {

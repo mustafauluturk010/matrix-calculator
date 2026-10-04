@@ -70,7 +70,6 @@ export function extDiv(ctx: QuadCtx, x: Ext, y: Ext): Ext | null {
   return a === null || b === null ? null : { a, b };
 }
 
-/** s'nin sayısal değeri. */
 export function sValue(ctx: QuadCtx): Cnum {
   if (ctx.kind === 'i') return { re: 0, im: 1 };
   const m = symToNumber(ctx.M);

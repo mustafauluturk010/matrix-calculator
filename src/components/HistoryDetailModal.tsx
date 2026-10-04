@@ -215,7 +215,6 @@ export default function HistoryDetailModal({ visible, entry, onClose, onEdit, on
               </TouchableOpacity>
             )}
 
-            {/* PDF aksiyonu */}
             <TouchableOpacity accessibilityRole="button" onPress={() => requestExport('pdf', () => setPdfOptionsVisible(true))} style={[styles.pdfBtn, { borderColor: theme.border, marginTop: 10 }]}>
               <Text style={[styles.pdfBtnText, { color: theme.text }]}>📄 PDF</Text>
             </TouchableOpacity>

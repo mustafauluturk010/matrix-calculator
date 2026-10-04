@@ -82,7 +82,6 @@ export default function CalculatorScreen() {
 
   const config = useMemo(() => getOperationConfig(operation), [operation]);
 
-  // --- Kayıtlı Matrisler / Geçmiş ekranından gelen "yükle" isteklerini işle ---
   useEffect(() => {
     if (pendingLoadMatrix) {
       const { target, matrix } = pendingLoadMatrix;
@@ -242,7 +241,7 @@ export default function CalculatorScreen() {
   useEffect(() => {
     const wasOn = prevComplexMode.current;
     prevComplexMode.current = complexMode;
-    if (!wasOn || complexMode) return; // yalnızca AÇIK → KAPALI geçişinde
+    if (!wasOn || complexMode) return;
     const hasI = (texts?: string[][]) => !!texts?.flat().some(hasImaginaryUnit);
     const aHasI = hasI(textsA);
     const bHasI = hasI(textsB);
@@ -268,9 +267,6 @@ export default function CalculatorScreen() {
   }, [complexMode]);
 
   function handleCalculate() {
-    // Skaler ve b vektörü alanları "3/4" gibi kesirli girişi de kabul eder
-    // (bkz. sanitizeFractionalInputText/parseFractionalInput, MatrixInput
-    // ile aynı mantığı paylaşır).
     const vectorB = vectorBText.map((tVal) => parseNum(tVal));
     const scalarNum = parseNum(scalar);
     const exponentNum = parseInt(exponent, 10) || 0;
@@ -312,7 +308,6 @@ export default function CalculatorScreen() {
         <Text style={[styles.header, { color: theme.text }]}>{t('appTitle')}</Text>
       </View>
 
-      {/* Karmaşık sayı modu düğmesi: açıkça basılabilir görünür (kenarlık, gölge, simge, AÇIK/KAPALI rozeti) */}
       <TouchableOpacity
         accessibilityRole="switch"
         accessibilityState={{ checked: complexMode }}
@@ -344,7 +339,6 @@ export default function CalculatorScreen() {
 
       <OperationSelector selected={operation} onSelect={setOperation} theme={theme} complexMode={complexMode} />
 
-      {/* A matrisi */}
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <View style={styles.cardHeaderRow}>
           <Text style={[styles.cardTitle, { color: theme.text }]}>{t('matrixA')}</Text>
@@ -386,7 +380,6 @@ export default function CalculatorScreen() {
         <MatrixInput label={t('values')} rows={rowsA} cols={colsA} value={matrixA} onChange={setMatrixA} onTextsChange={setTextsA} theme={theme} syncKey={syncCounterA} complexMode={complexMode} syncTexts={loadTextsA} />
       </View>
 
-      {/* B matrisi */}
       {config.needsTwoMatrices && (
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <View style={styles.cardHeaderRow}>

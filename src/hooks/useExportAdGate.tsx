@@ -10,17 +10,10 @@ import {
   showRewardedAd,
 } from '@/services/rewardedAdManager';
 
-// Dışa aktarma işlemleri (PDF / LaTeX) için "soft gate" Rewarded reklam kapısı.
-//
-//   Reklam hazır   -> "Reklamı izle?" sorusu -> reklam -> ödül kazanılırsa dışa aktar
-//   Reklam hazır değil / yüklenemedi / gösterilemedi / AdMob hatası -> reklamı atla, DOĞRUDAN dışa aktar
-//   Reklam gösterildi ama ödül kazanılmadan kapatıldı -> dışa aktarma yapılmaz, kullanıcı bilgilendirilir
-//
-// Kullanım:
-//   const { requestExport, adGateElement } = useExportAdGate(theme);
-//   <TouchableOpacity onPress={() => requestExport('pdf', () => setPdfOptionsVisible(true))}>
-//   <TouchableOpacity onPress={() => requestExport('latex', handleSaveStepsLatex)}>
-//   {adGateElement}
+// Dışa aktarma (PDF / LaTeX) için "soft gate" Rewarded reklam kapısı:
+//   reklam hazır -> "Reklamı izle?" -> ödül kazanılırsa dışa aktar
+//   reklam hazır değil / yüklenemedi / gösterilemedi / AdMob hatası -> atla, doğrudan dışa aktar
+//   reklam ödül kazanılmadan kapatıldı -> dışa aktarma yapılmaz, kullanıcı bilgilendirilir
 
 interface Pending {
   placement: AdPlacement;
@@ -56,7 +49,7 @@ export function useExportAdGate(theme: AppTheme) {
 
   const requestExport = useCallback(
     (placement: AdPlacement, action: () => void | Promise<void>) => {
-      if (busyRef.current) return; // çift dokunma / eşzamanlı ikinci istek
+      if (busyRef.current) return;
       busyRef.current = true;
 
       let ready = false;

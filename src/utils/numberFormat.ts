@@ -7,8 +7,6 @@ export type NumberDisplayMode = 'decimal' | 'fraction';
 const EPSILON = 1e-9;
 const MAX_DENOMINATOR = 1000000;
 
-// Fractional input: converts user-typed text such as "1/2" or "-3/4" into numbers.
-
 /**
  * Cleans free-form input text so it can only be a decimal number, a fraction (p/q),
  * a power (base^exp, e.g. "2^0.5") or an expression with pi. Both "." and "," are accepted
@@ -98,7 +96,6 @@ function sanitizeExpressionText(normalized: string): string {
   return out;
 }
 
-/** Bir sayısal parçada en fazla tek bir ondalık ayırıcıya ("." veya ",") izin verir. */
 function cleanOneSeparator(s: string): string {
   const idx = s.search(/[.,]/);
   if (idx === -1) return s;
@@ -287,7 +284,6 @@ function toDecimalString(value: number): string {
   return String(Object.is(rounded, -0) ? 0 : rounded);
 }
 
-/** Verilen sayıyı, seçilen görünüm moduna göre okunabilir bir metne çevirir. */
 export function formatNumber(value: number, mode: NumberDisplayMode): string {
   if (!Number.isFinite(value)) return String(value);
 
@@ -310,7 +306,6 @@ export function formatNumber(value: number, mode: NumberDisplayMode): string {
   return `${numerator}/${denominator}`;
 }
 
-/** 2'den başlayarak `max`'a kadar tam kare çarpanı olmayan (square-free) sayılar. */
 function squareFreeCandidates(max: number): number[] {
   const list: number[] = [];
   for (let n = 2; n <= max; n++) {
@@ -344,16 +339,13 @@ export function tryRadical(value: number): string | null {
   // hedef: value ≈ (p/q) * √r
   for (const r of RADICANDS) {
     const sqrtR = Math.sqrt(r);
-    // value = k * √r  =>  k = value / √r
     const k = absVal / sqrtR;
-    // k tam sayı mı?
     if (Math.abs(k - Math.round(k)) < RADICAL_TOL) {
       const kInt = Math.round(k);
       const signStr = sign < 0 ? '-' : '';
       if (kInt === 1) return `${signStr}√${r}`;
       return `${signStr}${kInt}√${r}`;
     }
-    // k basit kesir mi? (p/q)
     const frac = toFraction(k);
     if (frac && frac.denominator <= 100) {
       const check = (frac.numerator / frac.denominator) * sqrtR;

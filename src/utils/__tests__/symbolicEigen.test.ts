@@ -2,8 +2,6 @@ import { runOperation } from '../runOperation';
 import { parseFractionalInput } from '../numberFormat';
 import { parseSymbolicInput, symToNumber } from '../symbolic';
 
-// Sembolik özdeğer/özvektör motoru: 3x3 (üçgen, tekrarlı özdeğer, genel matris + kesin kök arama)
-
 const go = (A: string[][], lang: 'tr' | 'en' = 'tr', withSym = true) => {
   const M = A.map((r) => r.map((t) => parseFractionalInput(t)));
   return runOperation('eigen', M, M, 0, 2, [], 'gauss', lang, 'fraction', withSym ? { A } : undefined);

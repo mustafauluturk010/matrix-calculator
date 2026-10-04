@@ -106,7 +106,6 @@ export function cToString(z: C, mode: NumberDisplayMode): string {
   return `${fmtNum(re, mode)} ${im < 0 ? '-' : '+'} ${imBody}`;
 }
 
-/** Karmaşık vektörel çarpım. */
 function cross(u: C[], v: C[]): C[] {
   const c = (a: C, b: C, e: C, f: C) => cSub(cMul(a, b), cMul(e, f));
   return [c(u[1], v[2], u[2], v[1]), c(u[2], v[0], u[0], v[2]), c(u[0], v[1], u[1], v[0])];
@@ -135,11 +134,7 @@ function nullVector3(shifted: C[][]): C[] | null {
   return bestNorm > 1e-9 ? normalizeFirst(best!) : null;
 }
 
-/**
- * Gerçel 2x2 / 3x3 matrisin karmaşık özdeğer/özvektörlerini (bir gerçel kök +
- * eşlenik çift, ya da 2x2 eşlenik çift) sayısal hesaplar. Karmaşık özdeğer
- * YOKSA (ya da hesap güvenilir değilse) null döner.
- */
+/** Karmaşık özdeğer yoksa (ya da hesap güvenilir değilse) null döner. */
 export function eigenComplexNumeric(a: MatrixData, lang: LanguageCode, mode: NumberDisplayMode): OperationResult | null {
   const n = a.length;
   if ((n !== 2 && n !== 3) || a.some((row) => row.length !== n)) return null;

@@ -28,7 +28,6 @@ export default function SettingsScreen() {
     >
       <Text style={[styles.header, { color: theme.text }]}>{t('settingsTitle')}</Text>
 
-      {/* Dil seçimi */}
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.rowTitle, { color: theme.text, marginBottom: 4 }]}>{t('language')}</Text>
         <Text style={[styles.rowDesc, { color: theme.textSecondary, marginBottom: 14 }]}>{t('languageDesc')}</Text>
@@ -50,7 +49,6 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Sayı görünümü seçimi */}
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.rowTitle, { color: theme.text, marginBottom: 4 }]}>{t('numberDisplay')}</Text>
         <Text style={[styles.rowDesc, { color: theme.textSecondary, marginBottom: 14 }]}>{t('numberDisplayDesc')}</Text>
@@ -84,7 +82,6 @@ export default function SettingsScreen() {
         )}
       </View>
 
-      {/* Karmaşık sayı modu */}
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <View style={styles.row}>
           <View style={{ flex: 1, paddingRight: 12 }}>

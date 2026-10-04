@@ -2,18 +2,13 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TextStyle, StyleProp, ScrollView } from 'react-native';
 import { parseMathLabel, isPlainLabel, MathNode } from '@/utils/mathLabel';
 
-// Renders label text such as "3π/4", "√2/2" or "(9 + √61) / 2" in textbook style:
-// stacked fractions and a radical with an overline.
-//
 // Plain labels ("5", "-0.25", "NaN") return a single <Text> with no extra Views.
-//
-// Fine-tuning constants are BAR_THICKNESS and RADICAL_* below. Font metrics vary by device,
-// so adjust only these if the radical bar does not sit flush with the √ sign.
+// Font metrics vary by device, so adjust only BAR_THICKNESS and RADICAL_* if the radical
+// bar does not sit flush with the √ sign.
 
 const BAR_THICKNESS = 1.2;
 /** Kök çizgisinin √ glyph'inin üstüne oturması için radicand'ı aşağı iten oran (× fontSize). */
 const RADICAL_TOP_OFFSET = 0.13;
-/** İç içe kesirlerde yazı boyutu çarpanı ve alt sınır. */
 const NESTED_SCALE = 0.86;
 const MIN_FONT = 9;
 
@@ -100,10 +95,6 @@ export default function MathText({ text, color, fontSize = 13, fontWeight = '600
     </View>
   );
 }
-
-// ------------------------------------------------------------
-// MathList — "[a,  b,  c]" ve "v1 = [a,  b]" biçimli listeler
-// ------------------------------------------------------------
 
 interface MathListProps {
   items: string[];

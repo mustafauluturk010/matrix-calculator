@@ -57,10 +57,7 @@ export const fracFromSym = (n: SymNum): SymFrac => ({ n, d: SYM_ONE });
 
 const piPow = (k: number): SymNum => [{ c: { n: 1, d: 1 }, p: k, r: 1 }];
 
-/** a·k (k rasyonel n/d). */
 const scaleBy = (a: SymNum, n: I, d: I = 1): SymNum => symMul(a, symFromRational(n, d));
-
-// ---- π'de polinom aritmetiği (SymNum'ın yalnızca r = 1, p ≥ 0 terimleri) ----
 
 const polyLead = (a: SymNum): Term => a.reduce((best, t) => (t.p > best.p ? t : best), a[0]);
 
@@ -87,7 +84,6 @@ function polyRem(a: SymNum, b: SymNum): SymNum {
   return r;
 }
 
-/** a / b tam bölünüyorsa bölüm, değilse null. */
 function polyExactDiv(a: SymNum, b: SymNum): SymNum | null {
   let r = a;
   let quo: SymNum = SYM_ZERO;
@@ -128,11 +124,8 @@ function splitByRadical(N: SymNum): Map<number, SymNum> {
   return m;
 }
 
-/**
- * N ve D'nin ortak π-polinom çarpanını (varsa) sadeleştirir. Bu SADECE bir
- * okunabilirlik iyileştirmesidir: polyGcd/polyExactDiv katsayı büyümesi yüzünden
- * vazgeçerse (SymOverflowError), sonuç YANLIŞ olmaz, yalnızca SADELEŞMEMİŞ kalır.
- */
+/** N ve D'nin ortak π-polinom çarpanını (varsa) sadeleştirir; yalnızca okunabilirlik içindir,
+ * vazgeçilirse (SymOverflowError) sonuç yanlış olmaz, sadeleşmemiş kalır. */
 function cancelCommonFactor(N: SymNum, D: SymNum): { N: SymNum; D: SymNum } {
   try {
     const comps = splitByRadical(N);
@@ -250,7 +243,6 @@ export function fracMul(a: SymFrac, b: SymFrac): SymFrac | null {
   return fracNormalize(symMul(a.n, b.n), symMul(a.d, b.d));
 }
 
-/** a / b (b ≠ 0). */
 export function fracDiv(a: SymFrac, b: SymFrac): SymFrac | null {
   if (symIsZero(b.n)) return null;
   return fracNormalize(symMul(a.n, b.d), symMul(a.d, b.n));
@@ -276,13 +268,8 @@ export function fracToLatex(a: SymFrac): string {
   return `\\frac{${symToLatex(a.n)}}{${symToLatex(a.d)}}`;
 }
 
-/** n + d toplam terim sayısı (okunabilirlik eşiği için). */
 export const fracTermCount = (a: SymFrac): number => a.n.length + a.d.length;
 
-
-// ------------------------------------------------------------
-// Hücre metninden SymFrac: 1/(π+√2) gibi çok terimli bölenli girişler de okunur
-// ------------------------------------------------------------
 
 const FRAC_ONE: SymFrac = fracFromSym(SYM_ONE);
 

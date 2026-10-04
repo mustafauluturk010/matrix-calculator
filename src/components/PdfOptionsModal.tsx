@@ -4,8 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppTheme } from '@/theme/theme';
 import { useTranslation } from '@/i18n/useTranslation';
 
-// Short bottom sheet opened by the single PDF button, with Open / Share / Download options.
-
 interface Props {
   visible: boolean;
   onClose: () => void;

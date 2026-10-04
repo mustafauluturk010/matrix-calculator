@@ -22,9 +22,6 @@ import {
   solveLinearSystem,
 } from '@/utils/matrixUtils';
 
-// Single operation dispatcher shared by CalculatorScreen and HistoryDetailModal. Pure function with
-// no React Native dependency, so it can be unit tested.
-
 
 /** Sonuç ekranında görünecek özdeğer/özvektör metinlerinde ondalık sayı var mı? */
 function eigenHasDecimal(r: OperationResult, mode: NumberDisplayMode): boolean {

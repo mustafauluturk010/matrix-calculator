@@ -12,9 +12,6 @@ import { numberToInputText } from '@/utils/numberFormat';
 import { hasImaginaryUnit } from '@/utils/symbolic';
 import { MatrixData, NamedMatrix } from '@/types';
 
-// Saves new matrices, edits existing ones (updateSavedMatrix), and sends a matrix to the
-// Calculate tab as A (pendingLoadMatrix bridge + tab switch).
-
 export default function SavedMatricesScreen() {
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();

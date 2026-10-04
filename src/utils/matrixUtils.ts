@@ -21,20 +21,11 @@ function roundMatrix(m: MatrixData, decimals = CALC_DECIMALS): MatrixData {
   return m.map((row) => row.map((v) => round(v, decimals)));
 }
 
-// ------------------------------------------------------------
-// TEMEL YARDIMCI FONKSİYONLAR
-// ------------------------------------------------------------
-
 export function createEmptyMatrix(rows: number, cols: number): MatrixData {
   return Array.from({ length: rows }, () => Array(cols).fill(0));
 }
 
-/**
- * Bir matrisi yeni boyutlara göre yeniden boyutlandırır.
- * - Ortak (kesişen) hücrelerdeki mevcut değerler korunur.
- * - Yeni eklenen satır/sütunlardaki hücreler 0 ile doldurulur.
- * - Taşan (yeni boyutun dışında kalan) satır/sütunlar kaldırılır.
- */
+/** Ortak hücrelerdeki değerler korunur, yeni satır/sütunlar 0 ile dolar, taşanlar atılır. */
 export function resizeMatrix(matrix: MatrixData, newRows: number, newCols: number): MatrixData {
   return Array.from({ length: newRows }, (_, i) =>
     Array.from({ length: newCols }, (_, j) => matrix[i]?.[j] ?? 0)
@@ -61,10 +52,6 @@ export function isValidMatrix(m: MatrixData): boolean {
 export function dimensions(m: MatrixData): { rows: number; cols: number } {
   return { rows: m.length, cols: m[0]?.length ?? 0 };
 }
-
-// ------------------------------------------------------------
-// LaTeX çıktı yardımcısı
-// ------------------------------------------------------------
 
 export function matrixToLatex(m: MatrixData, mode: NumberDisplayMode = 'decimal', labels?: string[][]): string {
   // latexifyLabel: √, π ve tek terimli kesirleri gerçek LaTeX komutlarına
@@ -107,10 +94,6 @@ export function resultToLatex(result: OperationResult, opLabel: string, mode: Nu
   }
   return lines.join('\n\n');
 }
-
-// ------------------------------------------------------------
-// 1. TEMEL İŞLEMLER
-// ------------------------------------------------------------
 
 export function add(a: MatrixData, b: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
@@ -184,7 +167,6 @@ export function scalarMultiply(a: MatrixData, scalar: number, lang: LanguageCode
   return { success: true, matrixResult: result, steps };
 }
 
-// Detaylandırılmış matris çarpımı adımları
 export function multiply(a: MatrixData, b: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
   const fmt = (v: number) => formatNumber(v, mode);
@@ -200,7 +182,6 @@ export function multiply(a: MatrixData, b: MatrixData, lang: LanguageCode = 'tr'
   for (let i = 0; i < da.rows; i++) {
     for (let j = 0; j < db.cols; j++) {
       let sum = 0;
-      // Detaylı çarpım: her terimi ayrı ayrı göster
       const termParts: string[] = [];
       const valueParts: string[] = [];
       for (let k = 0; k < da.cols; k++) {
@@ -221,10 +202,6 @@ export function multiply(a: MatrixData, b: MatrixData, lang: LanguageCode = 'tr'
   steps.push({ title: S.addResultTitle(), description: S.multiplyResultDesc(), matrixSnapshot: result });
   return { success: true, matrixResult: result, steps };
 }
-
-// ------------------------------------------------------------
-// 2. TRANSPOZ VE İZ (TRACE)
-// ------------------------------------------------------------
 
 export function transpose(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
@@ -265,10 +242,6 @@ export function trace(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
     ],
   };
 }
-
-// ------------------------------------------------------------
-// 3. DETERMINANT
-// ------------------------------------------------------------
 
 // Gaussian elimination with partial pivoting (O(n^3)) for n >= 3.
 // No intermediate rounding; EPSILON is only used in the pivot check.
@@ -388,10 +361,6 @@ export function determinant(a: MatrixData, lang: LanguageCode = 'tr', mode: Numb
   return { success: true, scalarResult: finalValue, steps };
 }
 
-// ------------------------------------------------------------
-// 4. GAUSS ELİMİNASYONU / RREF
-// ------------------------------------------------------------
-
 export function rref(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): { result: MatrixData; steps: SolutionStep[]; pivotCount: number } {
   const S = strings(lang);
   const fmt = (v: number) => formatNumber(v, mode);
@@ -444,7 +413,6 @@ export function rref(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDispl
 export function rrefOperation(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
   const { result, steps } = rref(a, lang, mode);
-  // Round the returned result once, at the end.
   const rounded = roundMatrix(result);
   steps.push({ title: S.rrefResultTitle(), description: S.rrefResultDesc(), matrixSnapshot: rounded });
   return { success: true, matrixResult: rounded, steps };
@@ -491,20 +459,12 @@ export function gaussElimination(a: MatrixData, lang: LanguageCode = 'tr', mode:
   return { success: true, matrixResult: rounded, steps };
 }
 
-// ------------------------------------------------------------
-// 5. RANK
-// ------------------------------------------------------------
-
 export function rank(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
   const { steps, pivotCount } = rref(a, lang, mode);
   steps.push({ title: S.rankResultTitle(), description: S.rankResultDesc(pivotCount) });
   return { success: true, scalarResult: pivotCount, steps };
 }
-
-// ------------------------------------------------------------
-// 6. TERS MATRİS
-// ------------------------------------------------------------
 
 export function inverse(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
@@ -563,16 +523,11 @@ export function inverse(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDi
   }
   steps.push({ title: S.inverseReduceDoneTitle(), description: S.inverseReduceDoneDesc(), matrixSnapshot: roundMatrix(augmented) });
 
-  // Round the final result.
   const result = augmented.map((row) => row.slice(n).map((v) => round(v)));
   steps.push({ title: S.inverseResultTitle(), description: S.inverseResultDesc(), matrixSnapshot: result });
 
   return { success: true, matrixResult: result, steps };
 }
-
-// ------------------------------------------------------------
-// 7. LU AYRIŞTIRMASI
-// ------------------------------------------------------------
 
 export function luDecomposition(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
@@ -651,10 +606,6 @@ export function luDecomposition(a: MatrixData, lang: LanguageCode = 'tr', mode: 
   return { success: true, luResult: { L: Lr, U: Ur, P }, steps };
 }
 
-// ------------------------------------------------------------
-// 8. MATRİS KUVVETİ
-// ------------------------------------------------------------
-
 export function matrixPower(a: MatrixData, n: number, lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
   const { rows, cols } = dimensions(a);
@@ -707,11 +658,6 @@ export function matrixPower(a: MatrixData, n: number, lang: LanguageCode = 'tr',
   return { success: true, matrixResult: result, steps };
 }
 
-// ------------------------------------------------------------
-// 9. ÖZDEĞER / ÖZVEKTÖR
-// ------------------------------------------------------------
-
-/** Özdeğer hesaplama fonksiyonlarının ortak dönüş tipi. */
 interface EigenvalueResult {
   values: number[];
   raw: number[];
@@ -726,7 +672,6 @@ interface EigenvalueResult {
   radicalParts: { outside: number; inside: number } | null;
 }
 
-/** 2x2 matris için özdeğerleri sembolik olarak hesaplar */
 function eigenvalues2x2(a: MatrixData, mode: NumberDisplayMode = 'decimal'): EigenvalueResult {
   const tr = a[0][0] + a[1][1];
   const det = a[0][0] * a[1][1] - a[0][1] * a[1][0];
@@ -748,7 +693,6 @@ function eigenvalues2x2(a: MatrixData, mode: NumberDisplayMode = 'decimal'): Eig
     };
   }
 
-  // Köklü ifade olarak göster
   const sqrtD = Math.sqrt(discriminant);
   const rawL1 = (tr + sqrtD) / 2;
   const rawL2 = (tr - sqrtD) / 2;
@@ -798,7 +742,6 @@ function simplifyRadical(n: number): { outside: number; inside: number } {
   return { outside, inside: Math.round(inside) };
 }
 
-/** 3x3 matris için karakteristik polinom kökleri */
 function eigenvalues3x3(a: MatrixData): EigenvalueResult {
   const t = a[0][0] + a[1][1] + a[2][2];
   const detA = determinantValue(a);
@@ -965,7 +908,6 @@ function simplifyToNiceVector(vector: number[]): number[] | null {
     fractions.push(frac);
   }
 
-  // Ortak payda (LCM)
   let lcm = 1;
   for (const f of fractions) {
     lcm = (lcm * f.denominator) / gcdInt(lcm, f.denominator);
@@ -973,7 +915,6 @@ function simplifyToNiceVector(vector: number[]): number[] | null {
 
   const scaled = fractions.map((f) => Math.round((f.numerator * lcm) / f.denominator));
 
-  // En büyük ortak bölene böl
   let g = 0;
   for (const s of scaled) g = gcdInt(g, s);
   if (g === 0) return null;
@@ -1132,7 +1073,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
 
   if (rows === 2) {
     const a11_0 = a[0][0], a12_0 = a[0][1], a21_0 = a[1][0], a22_0 = a[1][1];
-    // Show det(A - λI) symbolically, with the matrix and its expansion.
     steps.push({
       title: S.eigenDetExpandTitle(),
       description: S.eigenDetExpandDesc(fmt(a11_0), fmt(a12_0), fmt(a21_0), fmt(a22_0), fmt(tr), fmt(detA)),
@@ -1173,7 +1113,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
   // Lambda label for step text: radicals[i] when radical, otherwise formatted with the current mode.
   const lambdaText = (i: number) => eigenRes.radicals[i] ?? formatNumber(eigenRes.values[i], mode);
 
-  // For 2x2, also show the factored form of the polynomial, e.g. (λ + a)(λ - b) = 0.
   if (rows === 2) {
     steps.push({
       title: S.eigenFactoredTitle(),
@@ -1181,13 +1120,11 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
     });
   }
 
-  // Köklü ifadelerle göster
   steps.push({
     title: S.eigenFoundTitle(),
     description: S.eigenFoundDesc(eigenRes.values.map((_, i) => lambdaText(i)).join(', ')),
   });
 
-  // Tekrarlı özdeğerleri birleştir
   const uniqueEigenvals: number[] = [];
   const seen = new Set<string>();
   for (const v of eigenRes.values) {
@@ -1252,7 +1189,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
       const shiftedLabels = entries.map((row) => row.map(entryLabel));
       const shiftedNumeric = entries.map((row) => row.map(entryNumeric));
 
-      // Adım: (A - λI) matrisini oluştur - köklü ifadeyle (mümkünse)
       steps.push({
         title: S.eigenShiftedMatrixTitle(idx + 1, lambdaLabel),
         description: S.eigenShiftedMatrixDesc(lambdaLabel),
@@ -1269,7 +1205,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
         description: S.eigenEquationDesc(eqStr),
       });
 
-      // Adım: serbest değişkeni 1 al
       const freeVar = useRow0 ? 2 : 1;
       const pivotVar = useRow0 ? 1 : 2;
       steps.push({
@@ -1300,14 +1235,12 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
         description: S.eigenSolveOtherDesc(pivotVar, pivotValLabel),
       });
 
-      // Step: general solution as a vector in one parameter.
       const genVecParts = freeVar === 2 ? [pivotValLabel, `x${freeVar}`] : [`x${freeVar}`, pivotValLabel];
       steps.push({
         title: S.eigenGeneralSolutionTitle(),
         description: S.eigenGeneralSolutionDesc(freeVar, genVecParts.join(', ')),
       });
 
-      // Step: solution set as multiples of a single vector.
       const setVecParts = freeVar === 2 ? [pivotValLabel, '1'] : ['1', pivotValLabel];
       steps.push({
         title: S.eigenSolutionSetTitle(),
@@ -1326,7 +1259,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
     } else {
       // General RREF simulation for 3x3 and diagonal 2x2 matrices, which can have several free variables.
 
-      // Adım: (A - λI) matrisini oluştur
       const shifted: MatrixData = a.map((row, i) => row.map((v, j) => round(i === j ? v - preciseLambda : v)));
       steps.push({
         title: S.eigenShiftedMatrixTitle(idx + 1, lambdaLabel),
@@ -1334,7 +1266,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
         matrixSnapshot: shifted,
       });
 
-      // Adım: (A - λI)v = 0 homojen sistemini RREF ile çöz
       steps.push({
         title: S.eigenRrefStartTitle(idx + 1, lambdaLabel),
         description: S.eigenRrefStartDesc(lambdaLabel),
@@ -1388,7 +1319,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
         pivotRow++;
       }
 
-      // Serbest değişkenleri belirle
       const freeColsForSteps: number[] = [];
       for (let j = 0; j < n; j++) {
         if (!pivotColsForSteps.includes(j)) freeColsForSteps.push(j);
@@ -1406,14 +1336,12 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
       eigenvectorRadicals.push(undefined);
       const vecLabel = vec.map(fmtR).join(', ');
 
-      // Geri yerine koyma sonucu
       steps.push({
         title: S.eigenBackSubTitle(idx + 1, lambdaLabel),
         description: S.eigenBackSubDesc(lambdaLabel, vecLabel),
       });
     }
 
-    // Doğrulama: A * v ≈ λ * v
     const Av = a.map((row) => round(row.reduce((s, v, j) => s + v * vec[j], 0)));
     const lambdaV = vec.map((v) => round(preciseLambda * v));
     const avText = `[${Av.map(fmtR).join(', ')}]`;
@@ -1444,10 +1372,6 @@ export function eigen(a: MatrixData, lang: LanguageCode = 'tr', mode: NumberDisp
     steps,
   };
 }
-
-// ------------------------------------------------------------
-// 10. DOĞRUSAL DENKLEM SİSTEMİ ÇÖZÜCÜ
-// ------------------------------------------------------------
 
 export function solveCramer(a: MatrixData, b: number[], lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   const S = strings(lang);
@@ -1512,10 +1436,6 @@ export function solveGauss(a: MatrixData, b: number[], lang: LanguageCode = 'tr'
 export function solveLinearSystem(a: MatrixData, b: number[], method: 'cramer' | 'gauss' = 'gauss', lang: LanguageCode = 'tr', mode: NumberDisplayMode = 'decimal'): OperationResult {
   return method === 'cramer' ? solveCramer(a, b, lang, mode) : solveGauss(a, b, lang, mode);
 }
-
-// ------------------------------------------------------------
-// GENEL HATA SONUCU ÜRETİCİ
-// ------------------------------------------------------------
 
 function errorResult(message: string): OperationResult {
   return { success: false, errorMessage: message, steps: [] };

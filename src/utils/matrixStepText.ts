@@ -1,16 +1,10 @@
 import { LanguageCode } from '@/types';
 
-/**
- * Adım metinlerine gömülen sayısal değerler, çağıran taraftan (matrixUtils.ts)
- * hem ham `number` hem de ondalık/kesir görünüm ayarına göre önceden
- * formatlanmış `string` olarak gelebilir. Bu sayede "detaylı çözüm"
- * açıklamalarındaki sayılar da kesirli görünüm ayarına uyar.
- */
+/** Adım metinlerindeki değerler ham `number` ya da ondalık/kesir ayarına göre önceden formatlanmış
+ * `string` olarak gelebilir; böylece detaylı çözüm sayıları da görünüm ayarına uyar. */
 type Num = number | string;
 
-// TR/EN text dictionary for all step titles/descriptions and error messages produced by
-// matrixUtils.ts, which calls these functions with the selected language. This keeps the
-// calculation engine language-independent.
+// TR/EN step titles/descriptions and error messages for matrixUtils.ts; keeps the engine language-independent.
 
 
 /** Negatif / kesirli / köklü değerleri formül içinde parantezle sarar: 3 -> 3, -2 -> (-2), 1/2 -> (1/2) */
@@ -25,7 +19,6 @@ function pick<T>(lang: LanguageCode, tr: T, en: T): T {
 
 export function strings(lang: LanguageCode) {
   return {
-    // ---- Genel ----
     dimMismatchVector: () =>
       pick(lang, "b vektörünün boyutu, A matrisinin satır sayısına eşit olmalıdır.", "The size of vector b must equal the number of rows of matrix A."),
     invalidMatrixError: () =>
@@ -35,7 +28,6 @@ export function strings(lang: LanguageCode) {
         'The matrix is empty or invalid (it contains a non-numeric or infinite value).'
       ),
 
-    // ---- add / subtract ----
     addDimError: () =>
       pick(lang, 'Toplama işlemi için matrislerin boyutları aynı olmalıdır.', 'Matrices must have the same dimensions for addition.'),
     subtractDimError: () =>
@@ -62,7 +54,6 @@ export function strings(lang: LanguageCode) {
     addResultDesc: () => pick(lang, 'Tüm elemanlar tek tek toplanarak sonuç matrisi elde edildi.', 'All elements were added individually to obtain the result matrix.'),
     subtractResultDesc: () => pick(lang, 'Tüm elemanlar tek tek çıkarılarak sonuç matrisi elde edildi.', 'All elements were subtracted individually to obtain the result matrix.'),
 
-    // ---- scalarMultiply ----
     scalarStartTitle: () => pick(lang, 'Skaler Çarpma Başlıyor', 'Scalar Multiplication Starts'),
     scalarStartDesc: (scalar: Num) =>
       pick(
@@ -75,7 +66,6 @@ export function strings(lang: LanguageCode) {
     scalarResultTitle: () => pick(lang, 'Sonuç', 'Result'),
     scalarResultDesc: () => pick(lang, 'Skaler çarpma tamamlandı.', 'Scalar multiplication complete.'),
 
-    // ---- multiply ----
     multiplyDimError: (c1: Num, r2: Num) =>
       pick(lang, `Çarpım için A'nın sütun sayısı (${c1}) B'nin satır sayısına (${r2}) eşit olmalıdır.`, `For multiplication, A's column count (${c1}) must equal B's row count (${r2}).`),
     multiplyDimCheckDesc: (r1: Num, c1: Num, r2: Num, c2: Num) =>
@@ -86,7 +76,6 @@ export function strings(lang: LanguageCode) {
       ),
     multiplyResultDesc: () => pick(lang, 'Matris çarpımı tamamlandı.', 'Matrix multiplication complete.'),
 
-    // ---- transpose ----
     transposeStartTitle: () => pick(lang, 'Transpoz Başlıyor', 'Transpose Starts'),
     transposeStartDesc: (cols: Num, rows: Num) =>
       pick(lang, `A'nın satırları Aᵀ'nin sütunları olacak: Aᵀ[j][i] = A[i][j]. Sonuç boyutu ${cols}x${rows} olacak.`, `A's rows become Aᵀ's columns: Aᵀ[j][i] = A[i][j]. The result size will be ${cols}x${rows}.`),
@@ -96,14 +85,12 @@ export function strings(lang: LanguageCode) {
     transposeResultTitle: () => pick(lang, 'Sonuç: Aᵀ', 'Result: Aᵀ'),
     transposeResultDesc: () => pick(lang, 'Tüm elemanlar karşılıklı konumlarına taşındı.', 'All elements were moved to their corresponding positions.'),
 
-    // ---- trace ----
     traceDimError: () => pick(lang, 'İz (trace) sadece kare matrisler için tanımlıdır.', 'Trace is only defined for square matrices.'),
     traceDiagTitle: () => pick(lang, 'Köşegen Elemanları', 'Diagonal Elements'),
     traceDiagDesc: (diag: string) => pick(lang, `Ana köşegen: [${diag}]`, `Main diagonal: [${diag}]`),
     traceSumTitle: () => pick(lang, 'Toplam', 'Sum'),
     traceSumDesc: (diag: string, sum: Num) => pick(lang, `İz = ${diag} = ${sum}`, `Trace = ${diag} = ${sum}`),
 
-    // ---- determinant ----
     determinantDimError: () => pick(lang, 'Determinant sadece kare matrisler için tanımlıdır.', 'Determinant is only defined for square matrices.'),
     detDepth1Title: (depth: Num) => pick(lang, `Derinlik ${depth}: 1x1`, `Depth ${depth}: 1x1`),
     detDepth1Desc: (val: Num) => pick(lang, `det = ${val}`, `det = ${val}`),
@@ -118,7 +105,6 @@ export function strings(lang: LanguageCode) {
     detExpandDesc: () => pick(lang, '1. satır üzerinden kofaktör açılımı yapılıyor.', 'Expanding along row 1 using cofactors.'),
     detResultTitle: () => pick(lang, 'Sonuç', 'Result'),
     detResultDesc: (val: Num) => pick(lang, `Determinant = ${val}`, `Determinant = ${val}`),
-    // ---- determinant: NxN için Gauss eliminasyonu (kısmi pivotlama) ----
     // Gaussian elimination (O(n^3)) for n >= 3: triangularize, then determinant = product of the
     // diagonal × sign from the number of row swaps.
     detEliminateStartTitle: () => pick(lang, 'Üçgenselleştirme', 'Triangularization'),
@@ -151,7 +137,6 @@ export function strings(lang: LanguageCode) {
         `Üst üçgen forma ulaşıldı: determinant, köşegen elemanlarının çarpımı ile satır değişimlerinden gelen işaretin çarpımıdır.\nDeterminant = (işaret: ${sign}) × (köşegen çarpımı: ${diag}) = ${val}`,
         `Upper-triangular form reached: the determinant is the product of the diagonal entries times the sign caused by row swaps.\nDeterminant = (sign: ${sign}) × (product of diagonal: ${diag}) = ${val}`
       ),
-    // ---- rref ----
     rrefStartTitle: () => pick(lang, 'Başlangıç Matrisi', 'Starting Matrix'),
     rrefStartDesc: () =>
       pick(
@@ -191,7 +176,6 @@ export function strings(lang: LanguageCode) {
     rrefResultDesc: () =>
       pick(lang, "Matris indirgenmiş satır eşelon formuna (RREF) getirildi: her pivot 1'dir ve bulunduğu sütunda tek sıfırdan farklı elemandır.", 'The matrix was reduced to Reduced Row Echelon Form (RREF): every pivot is 1 and is the only nonzero entry in its column.'),
 
-    // ---- gauss elimination (REF - RREF'ten farklı, sadece ileri eliminasyon) ----
     gaussStartTitle: () => pick(lang, 'Gauss Eliminasyonu Başlıyor', 'Gaussian Elimination Starts'),
     gaussStartDesc: () =>
       pick(
@@ -207,12 +191,10 @@ export function strings(lang: LanguageCode) {
         "The matrix was reduced to row echelon form (upper-triangular structure): only zeros appear below each pivot. Note: unlike RREF, pivots are not normalized to 1 and entries above pivots are not zeroed."
       ),
 
-    // ---- rank ----
     rankResultTitle: () => pick(lang, 'Sonuç', 'Result'),
     rankResultDesc: (pivotCount: Num) =>
       pick(lang, `RREF'te bulunan pivot (öncü) sütun sayısı, matrisin rankına eşittir: Rank(A) = ${pivotCount}. Bu, matrisin satırlarının/sütunlarının doğrusal bağımsız en büyük alt kümesinin boyutudur.`, `The number of pivot columns found in RREF equals the rank of the matrix: Rank(A) = ${pivotCount}. This is the size of the largest linearly independent subset of the matrix's rows/columns.`),
 
-    // ---- inverse ----
     inverseDimError: () => pick(lang, 'Ters matris sadece kare matrisler için tanımlıdır.', 'The inverse is only defined for square matrices.'),
     inverseSingularError: () => pick(lang, 'Matris tekildir (determinant = 0), ters matrisi yoktur.', 'The matrix is singular (determinant = 0); it has no inverse.'),
     inverseDetCheckTitle: () => pick(lang, 'Determinant Kontrolü', 'Determinant Check'),
@@ -259,7 +241,6 @@ export function strings(lang: LanguageCode) {
         'Sol yarı birim matris olduğuna göre, sağ yarı A matrisinin tersidir: A⁻¹.\nDoğrulama: A · A⁻¹ = I eşitliği sağlanır.',
         'Since the left half is now the identity matrix, the right half is the inverse of A: A⁻¹.\nVerification: A · A⁻¹ = I holds.'
       ),
-    // ---- LU decomposition ----
     luDimError: () => pick(lang, 'LU ayrıştırması sadece kare matrisler için tanımlıdır.', 'LU decomposition is only defined for square matrices.'),
     luStartTitle: () => pick(lang, 'Başlangıç', 'Start'),
     luStartDesc: () =>
@@ -286,7 +267,6 @@ export function strings(lang: LanguageCode) {
         'PA = LU decomposition complete. L is a lower triangular matrix with 1s on the diagonal (holding the elimination multipliers); U is the upper triangular matrix obtained after elimination. Verification: P·A = L·U holds.'
       ),
 
-    // ---- matrix power ----
     powerDimError: () => pick(lang, 'Kuvvet alma sadece kare matrisler için tanımlıdır.', 'Exponentiation is only defined for square matrices.'),
     powerIntegerError: () => pick(lang, 'Üs değeri tam sayı olmalıdır.', 'The exponent must be an integer.'),
     powerStartTitle: () => pick(lang, 'Kuvvet İşlemi', 'Exponentiation'),
@@ -318,7 +298,6 @@ export function strings(lang: LanguageCode) {
     powerResultTitle: () => pick(lang, 'Sonuç', 'Result'),
     powerResultDesc: (n: Num) => pick(lang, `A^${n} hesaplandı.`, `A^${n} was computed.`),
 
-    // ---- eigen ----
     eigenDimError: () => pick(lang, 'Özdeğer/özvektör sadece kare matrisler için tanımlıdır.', 'Eigenvalues/eigenvectors are only defined for square matrices.'),
     eigenSizeError: () =>
       pick(lang, 'Bu matrisin özdeğer/özvektörleri güvenilir biçimde hesaplanamadı (algoritma yakınsamadı).', 'The eigenvalues/eigenvectors of this matrix could not be computed reliably (the algorithm did not converge).'),
@@ -368,7 +347,6 @@ export function strings(lang: LanguageCode) {
         `The homogeneous system (A − ${lambda}·I)v = 0 is set up and solved via row reduction (RREF). Setting the free variable to 1 and back-substituting gives v = [${vec}], which is then normalized to a unit vector.`
       ),
 
-    // ---- eigen: detaylı özvektör adımları ----
     eigenShiftedMatrixTitle: (idx: Num, lambda: Num) =>
       pick(lang, `(A − ${lambda}·I) Matrisini Oluştur`, `Construct (A − ${lambda}·I) Matrix`),
     eigenShiftedMatrixDesc: (lambda: Num) =>
@@ -410,12 +388,9 @@ export function strings(lang: LanguageCode) {
         `We perform R${r} = R${r} − (${factor}) × R${p} to zero out the entry in R${r} at the pivot column. In RREF, each pivot column must contain 1 at the pivot position and 0 in all other rows.`
       ),
 
-    // ---- eigen: 2x2 için basitleştirilmiş yol (RREF simülasyonu yerine
-    // doğrudan denklem + serbest değişkeni 1 alma yöntemi). 2x2 sistemde
-    // satırlar zaten birbirine bağımlı olduğundan (rank 1), pivotu 1'e
-    // normalize etmeye çalışmak (özellikle özdeğer köklüyse) anlamsız/
-    // "çirkin" ara değerler üretiyordu; bunun yerine denklemlerden biri
-    // yazılıp serbest değişken doğrudan 1 alınarak diğeri çözülüyor. ----
+    // eigen 2x2: RREF simülasyonu yerine denklemlerden biri yazılıp serbest değişken 1 alınır. 2x2
+    // sistemde satırlar zaten bağımlıdır (rank 1); pivotu 1'e normalize etmek (özellikle özdeğer
+    // köklüyse) çirkin ara değerler üretiyordu.
     eigenEquationTitle: (idx: Num, lambda: Num) =>
       pick(lang, `λ${idx} = ${lambda}: Denklemi Kur`, `λ${idx} = ${lambda}: Set Up the Equation`),
     eigenEquationDesc: (eq: Num) =>
@@ -502,7 +477,6 @@ export function strings(lang: LanguageCode) {
         `${count} real eigenvalue(s) were found, each with an eigenvector. Verification: A·v = λ·v holds for every (λ, v) pair.`
       ),
 
-    // ---- linear systems ----
     cramerDimError: () => pick(lang, 'Cramer kuralı sadece kare katsayı matrisi için geçerlidir.', "Cramer's rule only applies to a square coefficient matrix."),
     cramerMainDetTitle: () => pick(lang, 'Ana Determinant', 'Main Determinant'),
     cramerMainDetDesc: (det: Num) =>

@@ -17,9 +17,6 @@ import SettingsScreen from '@/screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
-// Her sekme için aktif (dolu) ve pasif (outline) ikon adları -
-// React Navigation `focused` durumuna göre hangisinin kullanılacağını
-// bildiriyor, böylece aktif sekme dolu ikonla vurgulanıyor.
 const TAB_ICONS: Record<string, { focused: keyof typeof Ionicons.glyphMap; unfocused: keyof typeof Ionicons.glyphMap }> = {
   Hesapla: { focused: 'calculator', unfocused: 'calculator-outline' },
   Matrisler: { focused: 'grid', unfocused: 'grid-outline' },

@@ -112,10 +112,10 @@ export const exactField: Field<CxSym> = {
 };
 
 /**
- * a + b·s (s² = ctx.M) İKİNCİ DERECE GENİŞLEME cismi. Karekökü sadeleşmeyen (3+
- * terimli, π+kök karışık) diskriminantlı bir özdeğer ÇİFTİNİ, sayıya
- * indirgemeden KESİN taşımak için kullanılır (bkz. quadExt.ts). Yalnızca bir
- * KONTEKST (ctx) için geçerlidir; farklı ctx'lerden değerler karıştırılamaz.
+ * a + b·s (s² = ctx.M) ikinci derece genişleme cismi. Karekökü sadeleşmeyen (3+ terimli,
+ * π+kök karışık) diskriminantlı bir özdeğer çiftini sayıya indirgemeden kesin taşımak için
+ * kullanılır (bkz. quadExt.ts). Yalnızca tek bir ctx için geçerlidir; farklı ctx'lerden
+ * değerler karıştırılamaz.
  */
 export function extField(ctx: QuadCtx): Field<Ext> {
   return {

@@ -54,7 +54,6 @@ export const OPERATION_GROUPS: OperationGroup[] = [
 
 const HERMITIAN_OPTION: OperationOption = { type: 'hermitian', labelKey: 'opHermitian' };
 
-/** KARMAŞIK SAYI MODU: gruplar/başlıklar olmadan, tek düz çip listesi. */
 export const COMPLEX_MODE_OPERATIONS: OperationType[] = [
   'add',
   'subtract',

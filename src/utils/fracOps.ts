@@ -6,8 +6,6 @@
 // division is always possible (non-zero divisor), results have the form `(numerator)/(denominator)`
 // and the zero test is exact. It only runs when symbolicOps fails (null); the order is
 // SymNum -> SymFrac -> decimal.
-// Supported: add, subtract, scalar multiply, multiply, transpose, trace, determinant, inverse,
-// rank, RREF, Gauss, LU, power, equation solving (eigenvalues: see eigenGeneral).
 
 import { LanguageCode, MatrixData, OperationResult, OperationType } from '@/types';
 import { strings } from './matrixStepText';
@@ -96,10 +94,7 @@ const usesB = (t: OperationType) => t === 'add' || t === 'subtract' || t === 'mu
 const isBail = (e: unknown): boolean =>
   (!!e && (e as { noSymbolic?: boolean }).noSymbolic === true) || e instanceof SymOverflowError || (e as Error)?.name === 'SymOverflowError';
 
-/**
- * symbolicOps'un çözemediği gerçel π/√ girişleri için SymFrac motoru. Giriş tamamen
- * rasyonelse (ondalık motor zaten kesin gösterir) ya da ayrıştırılamıyorsa null.
- */
+/** Giriş tamamen rasyonelse (ondalık motor zaten kesin gösterir) ya da ayrıştırılamıyorsa null. */
 export function tryFracOperation(
   type: OperationType,
   matrixA: MatrixData,

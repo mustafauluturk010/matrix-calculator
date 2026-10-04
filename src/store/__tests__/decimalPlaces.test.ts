@@ -5,7 +5,7 @@ import { useAppStore } from '../useAppStore';
 import { formatNumber, getDecimalPlaces } from '@/utils/numberFormat';
 
 describe('Ondalık basamak ayarı', () => {
-  afterEach(() => useAppStore.getState().setDecimalPlaces(6)); // varsayılana dön
+  afterEach(() => useAppStore.getState().setDecimalPlaces(6));
 
   test('varsayılan 6 basamak', () => {
     expect(useAppStore.getState().decimalPlaces).toBe(6);

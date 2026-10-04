@@ -5,10 +5,6 @@ import { OperationResult } from '@/types';
 import { matrixToLatex } from './matrixUtils';
 import { NumberDisplayMode } from './numberFormat';
 
-// resultToLatex() (matrixUtils.ts) converts only the final result. This file turns the whole
-// step-by-step solution (each step's title, description and matrix snapshot) into a complete
-// compilable .tex document and saves it the same way as the PDF export (StorageAccessFramework /
-// share sheet).
 // The text can contain Turkish characters and symbols like λ, √, ², so the document is meant to
 // be compiled with XeLaTeX or LuaLaTeX (via fontspec); classic pdfLaTeX is not recommended.
 
@@ -85,7 +81,6 @@ function escapeLatex(text: string): string {
   return unicodeToLatex(escaped);
 }
 
-/** Bir işlemin TÜM adım adım çözümünü, derlenebilir bir LaTeX belgesi olarak üretir. */
 export function buildStepsLatexDocument(
   result: OperationResult,
   operationLabel: string,
@@ -133,11 +128,8 @@ export function buildStepsLatexDocument(
 
 export type SaveLatexResult = 'saved' | 'cancelled' | 'shared';
 
-/**
- * Üretilen .tex belgesini cihaza kaydeder/paylaşır. PDF export'taki
- * downloadPdf() ile aynı davranış şekli: Android'de SAF ile klasör
- * seçilir, diğer platformlarda sistem paylaşım sayfası açılır.
- */
+/** downloadPdf() ile aynı davranış: Android'de SAF ile klasör seçilir, diğer platformlarda
+ * sistem paylaşım sayfası açılır. */
 export async function saveStepsLatex(document: string, fileNamePrefix: string): Promise<SaveLatexResult> {
   const fileName = `${fileNamePrefix}-${Date.now()}.tex`;
 

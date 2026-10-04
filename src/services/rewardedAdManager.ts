@@ -1,15 +1,10 @@
 import { Platform } from 'react-native';
 import mobileAds, { AdEventType, RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
 
-// Uygulama genelinde TEK bir yerden yönetilen Rewarded reklam servisi.
-//
-// Kural (soft gate):
-//   reklam hazır  -> göster -> ödül kazanılırsa dışa aktar
-//   reklam hazır değil / yüklenemedi / gösterilemedi -> reklamı atla, doğrudan dışa aktar
-//
+// Uygulama genelinde tek yerden yönetilen Rewarded reklam servisi.
 // Bu dosya hiçbir koşulda exception fırlatmaz; her AdMob çağrısı try/catch içindedir.
-// Reklam dinleyicileri (listener) component'lerde değil burada tutulur ve her reklam
-// yaşam döngüsü bittiğinde (loaded / error / closed / timeout) eksiksiz temizlenir.
+// Reklam dinleyicileri component'lerde değil burada tutulur ve her reklam yaşam döngüsü
+// bittiğinde (loaded / error / closed / timeout) eksiksiz temizlenir.
 
 export type AdPlacement = 'pdf' | 'latex';
 
@@ -88,7 +83,6 @@ function addListener(slot: Slot, ad: RewardedAd, type: any, handler: (...args: a
 
 let initPromise: Promise<void> | null = null;
 
-/** AdMob SDK'sını bir kez başlatır ve reklamları önceden yükler. Asla reject etmez. */
 export function initRewardedAds(): Promise<void> {
   if (!initPromise) {
     initPromise = (async () => {
@@ -147,7 +141,6 @@ export function preloadRewardedAd(placement: AdPlacement, force = false): void {
   }
 }
 
-/** Reklam şu anda gösterilmeye hazır mı? (hazır değilse dışa aktarma doğrudan yapılmalı) */
 export function isRewardedAdReady(placement: AdPlacement): boolean {
   const slot = slots[placement];
   if (slot.status !== 'ready' || !slot.ad || showLock) return false;
@@ -159,10 +152,8 @@ export function isRewardedAdReady(placement: AdPlacement): boolean {
   return true;
 }
 
-/**
- * Hazır reklamı gösterir. Promise asla reject etmez; sonuç ShowOutcome olarak döner.
- * Reklam kapandığında ya da hata verdiğinde tüm dinleyiciler kaldırılır ve yeni reklam önceden yüklenir.
- */
+/** Promise asla reject etmez; sonuç ShowOutcome olarak döner. Reklam kapandığında ya da hata
+ * verdiğinde tüm dinleyiciler kaldırılır ve yeni reklam önceden yüklenir. */
 export function showRewardedAd(placement: AdPlacement): Promise<ShowOutcome> {
   return new Promise<ShowOutcome>((resolve) => {
     if (showLock) {
@@ -186,7 +177,6 @@ export function showRewardedAd(placement: AdPlacement): Promise<ShowOutcome> {
       settled = true;
       clearSlot(slot);
       showLock = false;
-      // Bir sonraki dışa aktarma için yeni reklamı hazırla (yan etkisi olmayan, hata yutan çağrı).
       const timer = setTimeout(() => {
         pendingReloadTimers.delete(timer);
         preloadRewardedAd(placement, true);
@@ -212,7 +202,6 @@ export function showRewardedAd(placement: AdPlacement): Promise<ShowOutcome> {
   });
 }
 
-/** Yalnızca testler için: modül durumunu sıfırlar. */
 export function __resetRewardedAdManagerForTests() {
   (Object.keys(slots) as AdPlacement[]).forEach((p) => {
     clearSlot(slots[p]);

@@ -1,10 +1,5 @@
 import type { MatrixData, SolutionStep } from '@/types';
 
-// Language-independent helpers for displaying the step-by-step solution. From an existing
-// SolutionStep (the calculation engines are untouched) they extract the step kind (row swap,
-// elimination, result, ...), split the description into plain-text/formula lines, and find the
-// matrix cells that changed from the previous step. Shared by StepsModal and the PDF export.
-
 export type StepKind = 'setup' | 'swap' | 'normalize' | 'eliminate' | 'compute' | 'verify' | 'result';
 
 export interface DescBlock {
@@ -37,11 +32,8 @@ function isFormulaLine(line: string): boolean {
   return /(=|→|↔|<->|≈)/.test(t);
 }
 
-/**
- * Açıklamayı bloklara böler: formül satırları (tek başına kutu içinde
- * gösterilir) ve ardışık düz metin satırları (tek paragraf). Boş satır
- * paragraf ayırıcıdır.
- */
+/** Formül satırları tek başına kutu olur, ardışık düz metin satırları tek paragraf;
+ * boş satır paragraf ayırıcıdır. */
 export function parseDescription(desc: string): DescBlock[] {
   const blocks: DescBlock[] = [];
   let buf: string[] = [];
@@ -70,11 +62,7 @@ function sameValue(a: number, b: number): boolean {
   return Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
 }
 
-/**
- * İki ardışık matris görüntüsü arasında değişen hücreleri işaretler.
- * Boyutlar farklıysa ya da HER hücre değiştiyse (vurgu anlamsız olur)
- * null döner.
- */
+/** Boyutlar farklıysa ya da her hücre değiştiyse (vurgu anlamsız olur) null döner. */
 export function changedCells(
   prev: MatrixData,
   cur: MatrixData,

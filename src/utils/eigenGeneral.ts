@@ -47,10 +47,6 @@ import {
 
 const T2 = (lang: 'tr' | 'en', tr: string, en: string) => (lang === 'en' ? en : tr);
 
-// ---------------------------------------------------------------
-// Sayısal karmaşık QR algoritması
-// ---------------------------------------------------------------
-
 const cabs = (z: C) => Math.hypot(z.re, z.im);
 const cmul = (a: C, b: C): C => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
 const csub = (a: C, b: C): C => ({ re: a.re - b.re, im: a.im - b.im });
@@ -134,17 +130,13 @@ export function qrEigenvalues(A: C[][]): C[] | null {
     H = Array.from({ length: m }, (_, i) =>
       Array.from({ length: m }, (_, j) => {
         let s: C = { re: 0, im: 0 };
-        for (let k = i; k < m; k++) s = cadd(s, cmul(R[i][k], Q[k][j])); // R üst üçgen
+        for (let k = i; k < m; k++) s = cadd(s, cmul(R[i][k], Q[k][j]));
         return i === j ? cadd(s, mu) : s;
       })
     );
   }
   return out.length === n ? out : null;
 }
-
-// ---------------------------------------------------------------
-// Kesin karakteristik polinom ve kök işlemleri (genel Field<T> üzerinde)
-// ---------------------------------------------------------------
 
 /** p(λ) = Σ c[k] λ^k (monik, c[n] = 1), Faddeev–LeVerrier. */
 export function charPoly<T>(F: Field<T>, A: T[][]): T[] {
@@ -180,10 +172,6 @@ function deflate<T>(F: Field<T>, c: T[], r: T): T[] {
   for (let k = m - 1; k >= 1; k--) q[k - 1] = F.add(c[k], F.mul(r, q[k]));
   return q;
 }
-
-// ---------------------------------------------------------------
-// Sayı tanıma (sayısal → kesin aday)
-// ---------------------------------------------------------------
 
 function approxRational(x: number, maxDen = 360, tol = 1e-9): [number, number] | null {
   if (!Number.isFinite(x) || Math.abs(x) > 1e6) return null;
@@ -288,10 +276,6 @@ function recognizeParts(x: number, basis: SymNum[], limit = 4): SymNum[] {
   return out;
 }
 
-// ---------------------------------------------------------------
-// Özuzay tabanı (RREF'ten)
-// ---------------------------------------------------------------
-
 function nullspaceFrom<T>(F: Field<T>, R: T[][], pivots: number[], n: number): T[][] {
   const pivSet = new Set(pivots);
   const basis: T[][] = [];
@@ -323,10 +307,6 @@ function cleanExactVector(v: CxSym[]): CxSym[] {
   const mk = (x: I): SymNum => symFromRational(flip ? iNeg(x) : x);
   return v.map((_, i) => ({ re: mk(iDivExact(scaled[2 * i], G)), im: mk(iDivExact(scaled[2 * i + 1], G)) }));
 }
-
-// ---------------------------------------------------------------
-// Ana işlev
-// ---------------------------------------------------------------
 
 /**
  * Division-free null vector of an (n×n, rank n−1) system: pick n−1 rows and compute each
@@ -550,7 +530,6 @@ export function eigenGeneral<T>(c: CxCtx<T>, A: T[][]): OperationResult {
   const numEigs = qrEigenvalues(An);
   if (!numEigs) return { success: false, errorMessage: S.eigenComplexError(), steps };
 
-  // ---- 1) Kesin kökler ----
   const entries: EigEntry<T>[] = [];
   const opaqueVectors = new Map<Ext, Ext[]>();
   const used: boolean[] = new Array(n).fill(false);
@@ -577,7 +556,7 @@ export function eigenGeneral<T>(c: CxCtx<T>, A: T[][]): OperationResult {
   if (cur) {
     const basis = candidateBasis(A as unknown as CxSym[][]);
     const tolMatch = 1e-6 * scale;
-    // NOT: sınır cur.length > 2 (yalnızca 1 kök kalana dek dener) - böylece "kalan
+    // Sınır cur.length > 2 (yalnızca 1 kök kalana dek dener) - böylece "kalan
     // ikinci derece denklem" aslında BİRBİRİNDEN BAĞIMSIZ iki sade kökse (ör.
     // üst üçgen bir bloktaki π ve √2 gibi, disc'leri π−√2 içerse de tek tek π ve
     // √2 doğrudan tanınabilir), opak/ikinci-derece formülüne düşmeden önce
@@ -614,7 +593,6 @@ export function eigenGeneral<T>(c: CxCtx<T>, A: T[][]): OperationResult {
       if (assigned < mult) break; // sayısal eşleşme bulunamadı: güvenli tarafta dur
       i = -1; // yeni polinomla baştan tara
     }
-    // Kalan polinom ≤ 2. derece: kesin çöz
     if (cur && cur.length <= 3 && cur.length > 1) {
       const solved = solveLowDegree(F, cur, basis);
       if (solved) {
@@ -705,7 +683,6 @@ export function eigenGeneral<T>(c: CxCtx<T>, A: T[][]): OperationResult {
     if (!used[k]) entries.push({ num: z, exact: null });
   });
 
-  // ---- 2) Sırala: gerçel kısım azalan, sanal kısım azalan ----
   entries.sort((a, b) => (Math.abs(b.num.re - a.num.re) > 1e-9 * scale ? b.num.re - a.num.re : b.num.im - a.num.im));
   if (entries.length !== n) return { success: false, errorMessage: S.eigenComplexError(), steps };
 
@@ -729,7 +706,6 @@ export function eigenGeneral<T>(c: CxCtx<T>, A: T[][]): OperationResult {
         : ''),
   });
 
-  // ---- 3) Özvektörler ----
   const groups: { idxs: number[]; e: EigEntry<T> }[] = [];
   entries.forEach((e, i) => {
     const g = groups.find((gr) =>

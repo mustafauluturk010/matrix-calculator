@@ -4,9 +4,6 @@ import { AppTheme } from '@/theme/theme';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { AdPlacement } from '@/services/rewardedAdManager';
 
-// Asks whether the user wants to watch a short ad before the PDF / LaTeX export;
-// shows a loading indicator while the ad is being shown.
-
 interface Props {
   visible: boolean;
   loading: boolean;

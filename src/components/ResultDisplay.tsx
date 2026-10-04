@@ -174,7 +174,6 @@ export default function ResultDisplay({ result, operationLabel, theme }: ResultD
         </View>
       )}
 
-      {/* Aksiyon butonları */}
       <View style={styles.actionsRow}>
         <TouchableOpacity
           onPress={handleCopy}

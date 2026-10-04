@@ -1,4 +1,3 @@
-// PDF ve LaTeX dışa aktarma için Rewarded reklam "soft gate" davranışının uçtan uca testi.
 // Gerçek ResultDisplay + gerçek reklam yöneticisi; yalnızca AdMob kütüphanesi ve dosya yazan
 // fonksiyonlar sahte.
 const mockInstances: any[] = [];

@@ -3,9 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Pressable, TextInput, Modal }
 import { AppTheme } from '@/theme/theme';
 import { useTranslation } from '@/i18n/useTranslation';
 
-// Opened from the Save button on the A/B matrix cards; asks for a short name and adds the
-// matrix to the saved matrices list. The backdrop is a sibling Pressable that does not wrap
-// the content (same as StepsModal).
+// The backdrop is a sibling Pressable that does not wrap the content (same as StepsModal).
 
 interface Props {
   visible: boolean;

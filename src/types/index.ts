@@ -2,7 +2,6 @@
 /** Matris veri tipi: number[satır][sütun] */
 export type MatrixData = number[][];
 
-/** Kaydedilmiş, isimlendirilmiş matris (A, B, C ...) */
 export interface NamedMatrix {
   id: string;
   name: string;
@@ -14,7 +13,6 @@ export interface NamedMatrix {
   createdAt: number;
 }
 
-/** Desteklenen matris işlemleri */
 export type OperationType =
   | 'add'
   | 'subtract'
@@ -33,36 +31,29 @@ export type OperationType =
   | 'power'
   | 'solveLinearSystem';
 
-/** Adım adım çözüm için tek bir işlem adımı */
 export interface SolutionStep {
   title: string;
   description: string;
   matrixSnapshot?: MatrixData;
-  /** matrixSnapshot ile aynı boyutta, hücre başına ÖNCEDEN FORMATLANMIŞ
-   *  (örn. köklü ifade içeren) etiketler. Mevcutsa, görüntüleme
-   *  bileşenleri matrixSnapshot'ı sayısal olarak formatlamak yerine bu
-   *  etiketleri kullanır - böylece örn. (A-λI) gibi irrasyonel/köklü
-   *  içeren matrisler doğru sembolik biçimde gösterilebilir. */
+  /** Hücre başına önceden formatlanmış etiketler (matrixSnapshot ile aynı boyut). Varsa
+   * görüntüleme matrixSnapshot'ı sayısal formatlamak yerine bunları kullanır; böylece
+   * (A-λI) gibi köklü matrisler sembolik biçimde gösterilebilir. */
   matrixSnapshotLabels?: string[][];
   extra?: string;
 }
 
-/** Bir işlemin genel sonucu */
 export interface OperationResult {
   success: boolean;
   errorMessage?: string;
   scalarResult?: number;
   matrixResult?: MatrixData;
-  /** SEMBOLİK MOTOR (bkz. utils/symbolic.ts, symbolicOps.ts): sonuç tam
-   *  sembolik hesaplandıysa (π/√ içeren girişler), matrixResult/scalarResult
-   *  yalnızca sayısal YAKLAŞIKLIKTIR; gösterimde bu etiketler kullanılır
-   *  ("√2 + √3" gibi). Alanlar yoksa gösterim eskisi gibi formatNumber ile. */
+  /** Sembolik motor (utils/symbolic.ts, symbolicOps.ts) sonucu tam sembolik hesapladıysa
+   * (π/√ içeren girişler), matrixResult/scalarResult yalnızca sayısal yaklaşıklıktır ve
+   * gösterimde bu etiketler kullanılır. Alanlar yoksa gösterim formatNumber iledir. */
   matrixResultLabels?: string[][];
   scalarResultLabel?: string;
-  /** Aynı sembolik sonucun LaTeX (matematik modu) karşılıkları. */
   matrixResultLatex?: string[][];
   scalarResultLatex?: string;
-  /** Sembolik denklem çözümü: vectorResult için etiket / LaTeX karşılıkları. */
   vectorResultLabels?: string[];
   vectorResultLatex?: string[];
   /** Sembolik LU: L ve U için hücre etiketleri (luResult sayısal yaklaşıklıktır). */
@@ -78,10 +69,9 @@ export interface OperationResult {
     eigenvectorsIm?: number[][];
     // null means the eigenvalue is rational and is formatted at display time using the current numberDisplayMode.
     radicalExpressions?: (string | null)[];
-    /** Her özvektör için, mümkünse (2x2 + irrasyonel özdeğer durumunda)
-     *  bileşen başına köklü ifade string'leri. Yoksa/uygulanamıyorsa
-     *  ilgili giriş undefined'dır ve sayısal `eigenvectors` değeri
-     *  formatNumberWithRadical ile gösterilir. */
+    /** Her özvektör için (2x2 + irrasyonel özdeğer durumunda) bileşen başına köklü ifade
+     * string'leri. Yoksa girişi undefined'dır ve sayısal `eigenvectors` değeri
+     * formatNumberWithRadical ile gösterilir. */
     eigenvectorRadicals?: (string[] | undefined)[];
   };
   luResult?: { L: MatrixData; U: MatrixData; P?: MatrixData };
@@ -89,7 +79,6 @@ export interface OperationResult {
   steps: SolutionStep[];
 }
 
-/** Bir işlemin tüm girdi durumu - geçmişten yeniden düzenlenebilmesi için saklanır */
 export interface OperationInputSnapshot {
   matrixA: MatrixData;
   matrixB: MatrixData;
@@ -105,7 +94,6 @@ export interface OperationInputSnapshot {
   complex?: boolean;
 }
 
-/** Geçmiş listesindeki bir kayıt */
 export interface HistoryEntry {
   id: string;
   timestamp: number;

@@ -5,7 +5,6 @@ import { AppTheme } from '@/theme/theme';
 import { NamedMatrix } from '@/types';
 import { useTranslation } from '@/i18n/useTranslation';
 
-// Opened from the "pick from saved" button; the chosen matrix is loaded into A or B.
 // The backdrop is a separate Pressable that does not wrap the content, so FlatList
 // scrolling works (same as StepsModal).
 

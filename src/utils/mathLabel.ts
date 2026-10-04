@@ -1,7 +1,6 @@
-// Converts label text to textbook-style display. Result labels are plain text ("3π/4", "√2/2",
-// "(9 + √61) / 2", "-π√2/4 + 1/2"); this module parses them into a small tree (MathNode[]) that
-// MathText.tsx and mathLabelToHtml (PDF) render with real stacked fractions and radicals with
-// an overline.
+// Parses plain-text labels ("3π/4", "(9 + √61) / 2", "-π√2/4 + 1/2") into a small tree
+// (MathNode[]) that MathText.tsx and mathLabelToHtml (PDF) render with real stacked fractions
+// and radicals with an overline.
 // Display only: calculation, copying (plain text) and LaTeX output are unaffected.
 //
 // Rules (math precedence):
@@ -16,7 +15,6 @@ export type MathNode =
   | { type: 'sqrt'; radicand: MathNode[] }
   | { type: 'frac'; num: MathNode[]; den: MathNode[] };
 
-/** Etiket düz bir metinden ibaret mi (yığılmış kesir / kök içermiyor mu)? */
 export function isPlainLabel(label: string): boolean {
   return !label.includes('/') && !label.includes('√');
 }
@@ -44,7 +42,6 @@ function stripOuterParens(s: string): string {
   return t;
 }
 
-/** Parantez derinliği 0 iken " + " / " - " ile toplam terimlerine böler. */
 function splitTerms(s: string): { terms: string[]; ops: string[] } {
   const terms: string[] = [];
   const ops: string[] = [];
@@ -65,7 +62,6 @@ function splitTerms(s: string): { terms: string[]; ops: string[] } {
   return { terms, ops };
 }
 
-/** Parantez derinliği 0 olan "/" indekslerini döndürür. */
 function topLevelSlashes(s: string): number[] {
   const idx: number[] = [];
   let depth = 0;
@@ -78,7 +74,6 @@ function topLevelSlashes(s: string): number[] {
   return idx;
 }
 
-/** "/" içermeyen bir parçayı metin + kök düğümlerine çevirir. */
 function parseInline(s: string): MathNode[] {
   const out: MathNode[] = [];
   let buf = '';
@@ -143,7 +138,7 @@ function parseTerm(term: string): MathNode[] {
 }
 
 /**
- * Etiketi ağaca çevirir. Düz sayılar tek bir 'text' düğümü olur.
+ * Düz sayılar tek bir 'text' düğümü olur.
  * Toplam terimleri arasındaki işaretler " + " / " − " metni olarak korunur.
  */
 export function parseMathLabel(label: string): MathNode[] {
@@ -159,10 +154,6 @@ export function parseMathLabel(label: string): MathNode[] {
   });
   return out;
 }
-
-// ------------------------------------------------------------
-// PDF / HTML çıktısı
-// ------------------------------------------------------------
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -185,7 +176,6 @@ function nodesToHtml(nodes: MathNode[]): string {
     .join('');
 }
 
-/** Etiketi PDF (HTML) için yığılmış kesirli biçime çevirir. Düz etiketler yalnızca kaçışlanır. */
 export function mathLabelToHtml(label: string): string {
   if (isPlainLabel(label)) return escapeHtml(label);
   return nodesToHtml(parseMathLabel(label));

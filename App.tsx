@@ -22,8 +22,8 @@ export default function App() {
   const [bootstrapped, setBootstrapped] = useState(false);
 
   useEffect(() => {
-    // AdMob SDK'sını bir kere başlatır ve PDF/LaTeX Rewarded reklamlarını önceden yükler.
-    // Hata verirse uygulama normal çalışır; dışa aktarmalar reklamsız doğrudan yapılır.
+    // AdMob'u başlatır ve rewarded reklamları önceden yükler. Hata verirse uygulama normal çalışır;
+    // dışa aktarmalar reklamsız doğrudan yapılır.
     void initRewardedAds();
 
     async function bootstrap() {

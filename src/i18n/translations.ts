@@ -1,7 +1,5 @@
 export type LanguageCode = 'tr' | 'en';
 
-// Simple dependency-free key -> text dictionary. To add a language, add a new language object here.
-
 export const translations = {
   tr: {
     appTitle: 'Matris Hesaplama Makinesi',

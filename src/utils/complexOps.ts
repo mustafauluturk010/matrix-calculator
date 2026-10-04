@@ -5,9 +5,6 @@
 //   2) numeric complex (double precision), a fallback when exact tracking fails (multi-term
 //      divisor mixing π and roots, term explosion).
 // Returns null when the input has no `i`, so the existing real engines run unchanged.
-// Supported: add, subtract, scalar multiply, multiply, transpose, trace, determinant, inverse,
-// rank, RREF, Gauss, LU, power, equation solving (Gauss/Cramer), eigenvalues/eigenvectors
-// (see eigenGeneral.ts).
 
 import { buildLuSteps } from './luSteps';
 import { LanguageCode, MatrixData, OperationResult, OperationType, SolutionStep } from '@/types';
@@ -38,8 +35,6 @@ const isBail = (e: unknown): boolean =>
 
 class InputError extends Error {}
 
-// ---------- genel yardımcılar ----------
-
 export const lab = <T,>(c: CxCtx<T>, x: T): string => c.F.fmt(x, c.mode);
 
 export function snap<T>(c: CxCtx<T>, m: Mat<T>) {
@@ -50,7 +45,6 @@ function fail(message: string, steps: SolutionStep[] = []): OperationResult {
   return { success: false, errorMessage: message, steps };
 }
 
-/** Okunabilirlik: sonuç hücreleri maxResultSize'ı aşıyorsa kesin takibi bırak. */
 function readable<T>(c: CxCtx<T>, cells: T[]): void {
   if (c.maxResultSize === undefined) return;
   for (const x of cells) if (c.F.size(x) > c.maxResultSize) bail();
@@ -93,8 +87,6 @@ const need = <T,>(x: T | null): T => {
   if (x === null) throw Object.assign(new Error('bölme temsil edilemiyor'), { noSymbolic: true });
   return x;
 };
-
-// ---------- determinant ----------
 
 function detElim<T>(F: Field<T>, m: Mat<T>): T {
   const A = m.map((r) => r.slice());
@@ -142,8 +134,6 @@ export function detOf<T>(F: Field<T>, m: Mat<T>): T {
   }
   return detElim(F, m);
 }
-
-// ---------- eliminasyon (RREF / basamaklı form) ----------
 
 interface ElimResult<T> {
   R: Mat<T>;
@@ -213,13 +203,10 @@ export function eliminate<T>(
   return { R, pivots, swaps };
 }
 
-// ---------- işlemler ----------
-
 function needSquare<T>(c: CxCtx<T>, A: Mat<T>, msg: string): OperationResult | null {
   return A.length === A[0].length ? null : fail(msg);
 }
 
-/** Bir sonucu kesin/sayısal cisimde hesaplayan ana dağıtıcı. */
 export function runGeneric<T>(
   c: CxCtx<T>,
   type: OperationType,
@@ -485,14 +472,9 @@ export function runGeneric<T>(
   }
 }
 
-// ---------- giriş ayrıştırma ve dağıtım ----------
-
 const usesB = (t: OperationType) => t === 'add' || t === 'subtract' || t === 'multiply';
 
-/**
- * Karmaşık sayı modunda işlemi çalıştırır. Kullanılan girişlerin hiçbirinde
- * karmaşık birim `i` yoksa null döner (gerçel motorlar devralır).
- */
+/** Kullanılan girişlerin hiçbirinde karmaşık birim `i` yoksa null döner (gerçel motorlar devralır). */
 export function tryComplexOperation(
   type: OperationType,
   matrixA: MatrixData,
@@ -514,7 +496,6 @@ export function tryComplexOperation(
   if (textsA.length !== matrixA.length || (usesB(type) && (!textsB || textsB.length !== matrixB.length))) return null;
 
   try {
-    // 1) KESİN cisim
     const exactParsed = <U,>(texts: string[][] | undefined): Mat<CxSym> | null => {
       if (!texts) return null;
       const out: Mat<CxSym> = [];
@@ -553,7 +534,6 @@ export function tryComplexOperation(
       }
     }
 
-    // 2) SAYISAL cisim
     const num = (texts: string[][]): Mat<C> => texts.map((row) => row.map((t) => parseComplexNumber(t)!));
     const nA = num(textsA);
     let maxAbs = 1;

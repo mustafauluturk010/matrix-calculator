@@ -11,7 +11,6 @@ import { classifyStep, parseDescription, changedCells, StepKind } from '@/utils/
 
 const MONO = Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' });
 
-// Shows the step-by-step solution in a large sheet that does not fill the whole screen.
 // The dimmed backdrop is a separate absolutely positioned Pressable behind the content, not a
 // wrapper around it: a wrapping touchable conflicts with the inner ScrollView's gesture
 // handling and blocks scrolling. As siblings, tap-outside-to-close and free scrolling both work.
@@ -79,7 +78,6 @@ export default function StepsModal({ visible, onClose, result, operationLabel, t
     result: t('stepKindResult'),
   };
 
-  // Her adım için: türü ve önceki adıma göre değişen hücreler
   const total = result.steps.length;
   let prevIdx = -1;
   let anyHighlight = false;
@@ -98,10 +96,8 @@ export default function StepsModal({ visible, onClose, result, operationLabel, t
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
       <View style={styles.root}>
-        {/* Backdrop: içeriğin ARKASINDA, ayrı bir katman - sarmalamıyor */}
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
-        {/* Sheet: backdrop'un kardeşi, kendi dokunuş alanına sahip */}
         <Animated.View
           entering={FadeInUp.duration(250)}
           style={[

@@ -179,10 +179,6 @@ describe('Sembolik matris işlemleri (v1)', () => {
   });
 });
 
-// ------------------------------------------------------------
-// AŞAMA 4: bölme gerektiren işlemler
-// ------------------------------------------------------------
-
 const runX = (type: any, A: string[][], extra: Record<string, any> = {}, mode: 'decimal' | 'fraction' = 'fraction') =>
   trySymbolicOperation(type, num(A), [[0]], { A, ...extra }, 'tr', mode);
 
@@ -270,7 +266,6 @@ describe('Sembolik: ters, RREF, rank, LU, Gauss, denklem çözme, üs', () => {
     // Hiçbir etiket ondalık içermez
     const flat = r.matrixResultLabels!.flat().concat(r.steps.map((st) => st.description));
     expect(flat.some((t) => /\d\.\d{3}/.test(t))).toBe(false);
-    // A · A⁻¹ = I
     const a = num(A);
     const inv = r.matrixResult!;
     for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
@@ -346,9 +341,9 @@ describe('symSqrt (özdeğer desteği için karekök)', () => {
   });
 
   test('tek terimli rasyonel: tam kare olmayanlar kare-çarpansız köke indirgenir', () => {
-    expect(symToString(symSqrt(P('8'))!)).toBe('2√2'); // √8 = √(4·2) = 2√2
+    expect(symToString(symSqrt(P('8'))!)).toBe('2√2');
     expect(symToString(symSqrt(P('2'))!)).toBe('√2');
-    expect(symToString(symSqrt(P('3/4'))!)).toBe('√3/2'); // √(3/4) = (1/2)√3
+    expect(symToString(symSqrt(P('3/4'))!)).toBe('√3/2');
     expect(symToString(symSqrt(P('12'))!)).toBe('2√3');
   });
 
@@ -383,16 +378,12 @@ describe('symSqrt (özdeğer desteği için karekök)', () => {
 
   test('iç içe kök: FARKLI iki kök üreten durumlar (√x ± √y)', () => {
     const sq = (a: number, k: string, c: number) => symAdd(symFromRational(a), symMul(symFromRational(c), P(k)));
-    // √(5 − 2√6) = √3 − √2
     expect(symToString(symSqrt(sq(5, '√6', -2))!)).toBe('-√2 + √3');
-    // √(5 + 2√6) = √3 + √2
     expect(symToString(symSqrt(sq(5, '√6', 2))!)).toBe('√2 + √3');
-    // √(8 + 2√15) = √5 + √3
     expect(symToString(symSqrt(sq(8, '√15', 2))!)).toBe('√3 + √5');
-    // √(6 − 2√5) = √5 − 1   (x=5, y=1)
     expect(symToString(symSqrt(sq(6, '√5', -2))!)).toBe('-1 + √5');
     // S = 61/16 tam kare değil ⇒ denest edilemez
-    const a = symAdd(P('9/4'), symMul(P('1/2'), P('√5'))); // x,y = (9/4 ± √(81/16−5/4))/2 → S=61/16, tam kare değil
+    const a = symAdd(P('9/4'), symMul(P('1/2'), P('√5')));
     expect(symSqrt(a)).toBeNull();
     // Sonuç her zaman ≥ 0 ve karesi girdiye TAM eşit
     for (const [A0, D, b] of [[5, 6, -2], [5, 6, 2], [7, 3, 4], [11, 30, -2], [12, 35, 2], [3, 2, 2], [10, 21, -2], [14, 13, -6]] as const) {

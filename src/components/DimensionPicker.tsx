@@ -3,8 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AppTheme } from '@/theme/theme';
 import { useTranslation } from '@/i18n/useTranslation';
 
-// Stepper for choosing the row/column count with +/- buttons. The default range is 1 to 6;
-// operations that do not support 1x1 (e.g. eigen) report their own error.
+// Operations that do not support 1x1 (e.g. eigen) report their own error.
 
 interface DimensionPickerProps {
   label: string;

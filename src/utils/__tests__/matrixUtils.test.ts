@@ -259,13 +259,10 @@ describe('LU Ayrıştırması', () => {
     const r = luDecomposition(a);
     expect(r.success).toBe(true);
     const { L, U } = r.luResult!;
-    // L alt üçgen mi?
     expect(L[0][1]).toBe(0);
-    // U üst üçgen mi?
     expect(U[1][0]).toBe(0);
   });
 
-  // Yardımcı: P (permütasyon matrisi olarak saklanan satır dizisi) ile A'yı çarp.
   function permuteRows(p: number[][], a: number[][]): number[][] {
     return p.map((prow) => {
       const rowIdx = prow.findIndex((v) => v === 1);

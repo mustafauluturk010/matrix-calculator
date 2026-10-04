@@ -1,8 +1,3 @@
-// Symbolic matrix operations for entries containing π or roots.
-//
-// Covers add, subtract, scalar multiply, multiply, transpose, trace, determinant (cofactor
-// expansion), power, inverse, RREF, rank, Gauss elimination, LU and equation solving (Gauss
-// and Cramer), plus 2x2 and 3x3 eigenvalues/eigenvectors (trySymbolicEigen, end of file).
 // Division is done only by a single-term pivot or a pi-free multi-term one (rationalized with
 // the conjugate). A pivot mixing π and roots (e.g. π + √2) is not tracked symbolically and
 // the numeric engine takes over.
@@ -15,7 +10,6 @@
 // Other cases (4x4+, irreducible cubic, 3+ term discriminant, ...) return null and the caller
 // falls back to matrixUtils.eigen.
 //
-// This module sits alongside the numeric engine and does not replace it.
 // trySymbolicOperation() returns a result only when all of the following hold; otherwise it
 // returns null and runOperation uses the numeric engine:
 //   1. the operation is supported,
@@ -81,18 +75,14 @@ import {
 type Mode = 'decimal' | 'fraction';
 type SymMatrix = SymNum[][];
 
-/** Sembolik motora verilen ham giriş metinleri. */
 export interface SymbolicInputs {
   A?: string[][];
   B?: string[][];
   scalar?: string;
-  /** Denklem çözmede b vektörünün ham metinleri. */
   b?: string[];
-  /** Üs işlemindeki tam sayı üs. */
   exponent?: number;
   /** Denklem çözme yöntemi (varsayılan 'gauss'). */
   method?: 'cramer' | 'gauss';
-  /** KARMAŞIK SAYI MODU: hücrelerde `3+2i` gibi girişler olabilir (bkz. complexOps.ts). */
   complex?: boolean;
 }
 
@@ -140,8 +130,8 @@ const anyIrrational = (m: SymMatrix) => m.some((row) => row.some(symIsIrrational
 
 /**
  * Sembolik takip sürdürülemiyor (çok terimli bölen, terim patlaması ...).
- * NOT: Error alt sınıfı + instanceof kullanılmıyor; Babel'in sınıf dönüşümü
- * bazı ortamlarda instanceof'u bozar. Bunun yerine işaretli düz bir Error.
+ * Error alt sınıfı + instanceof kullanılmıyor; Babel'in sınıf dönüşümü bazı ortamlarda
+ * instanceof'u bozar. Bunun yerine işaretli düz bir Error.
  */
 const noSym = (): never => {
   const e = new Error('SymNum: sembolik takip sürdürülemiyor');
@@ -167,7 +157,6 @@ function checkTerms(m: SymMatrix): void {
   for (const row of m) for (const v of row) if (v.length > MAX_RESULT_TERMS) noSym();
 }
 
-/** Etiketli bir matris anlık görüntüsü (adım) için ortak alanlar. */
 function snapshot(m: SymMatrix, mode: Mode) {
   checkTerms(m);
   return { matrixSnapshot: numericOf(m), matrixSnapshotLabels: toLabels(m, mode) };
@@ -183,8 +172,6 @@ function matrixResult(m: SymMatrix, steps: SolutionStep[]): OperationResult {
     steps,
   };
 }
-
-// ---- π ile kök karışık paydalı (SymFrac) sonuçlar: bkz. symFrac.ts ----
 
 type FracMatrix = SymFrac[][];
 
@@ -227,10 +214,6 @@ function scalarResult(v: SymNum, steps: SolutionStep[]): OperationResult {
   };
 }
 
-// ------------------------------------------------------------
-// Determinant: 1. satır boyunca kofaktör açılımı (bölme YOK)
-// ------------------------------------------------------------
-
 function minorOf(m: SymMatrix, col: number): SymMatrix {
   return m.slice(1).map((row) => row.filter((_, j) => j !== col));
 }
@@ -247,10 +230,6 @@ function detSym(m: SymMatrix): SymNum {
   }
   return sum;
 }
-
-// ------------------------------------------------------------
-// Çarpma çekirdeği (çarpma ve üs işlemi ortak kullanır)
-// ------------------------------------------------------------
 
 function mulCells(X: SymMatrix, Y: SymMatrix, S: ReturnType<typeof strings>, mode: Mode) {
   const f = (v: SymNum) => symToString(v, mode);
@@ -280,10 +259,6 @@ function mulCells(X: SymMatrix, Y: SymMatrix, S: ReturnType<typeof strings>, mod
   }
   return { R, cellSteps };
 }
-
-// ------------------------------------------------------------
-// AŞAMA 4: bölme gerektiren işlemler (bölünebilir pivot şartıyla)
-// ------------------------------------------------------------
 
 const LINEAR_OPERATIONS: OperationType[] = [
   'inverse',
@@ -424,7 +399,6 @@ function invertSym(A: SymMatrix, S: ReturnType<typeof strings>, mode: Mode, step
   return result;
 }
 
-/** SymFrac hücreli kare matris çarpımı. */
 function mulFrac(X: FracMatrix, Y: FracMatrix): FracMatrix {
   const n = X.length;
   return Array.from({ length: n }, (_, i) =>
@@ -582,7 +556,6 @@ function computeLinear(
     rowOp: (r, factor, pr) => ({ title: S.rrefRowOpTitle(), description: S.rrefRowOpDesc(r + 1, factor, pr + 1) }),
   };
 
-  // b vektörü (yalnızca denklem çözmede)
   let b: SymNum[] | null = null;
   if (type === 'solveLinearSystem') {
     b = parseVector(inputs.b, rows);
@@ -732,7 +705,6 @@ function computeLinear(
     };
   }
 
-  // ---------- denklem çözme ----------
   const bb = b as SymNum[];
   const vectorResult = (x: SymNum[], steps: SolutionStep[]): OperationResult => {
     checkTerms([x]);
@@ -831,10 +803,6 @@ function computeLinear(
   }
 }
 
-// ------------------------------------------------------------
-// Ana giriş noktası
-// ------------------------------------------------------------
-
 export function trySymbolicOperation(
   type: OperationType,
   matrixA: MatrixData,
@@ -871,7 +839,6 @@ function compute(
 
   if (LINEAR_OPERATIONS.includes(type)) return computeLinear(type, A, inputs, lang, mode);
 
-  // ---------- tek matrisli işlemler ----------
   if (type === 'transpose') {
     if (!anyIrrational(A)) return null;
     const rows = A.length;
@@ -952,7 +919,6 @@ function compute(
     return scalarResult(det, steps);
   }
 
-  // ---------- skalerle çarpma ----------
   if (type === 'scalarMultiply') {
     const k = parseSymbolicInput(inputs.scalar ?? '');
     if (k === null) return null;
@@ -974,7 +940,6 @@ function compute(
     return matrixResult(R, steps);
   }
 
-  // ---------- iki matrisli işlemler ----------
   const B = parseMatrix(inputs.B, matrixB);
   if (!B) return null;
   if (!anyIrrational(A) && !anyIrrational(B)) return null;
@@ -1024,11 +989,9 @@ function compute(
   return null;
 }
 
-// ------------------------------------------------------------
-// Eigenvalues/eigenvectors (symbolic, 2x2). runOperation calls this separately for 'eigen':
+// Eigenvalues/eigenvectors (symbolic, 2x2 and 3x3). runOperation calls this separately for 'eigen':
 // the result fills OperationResult.eigenResult instead of matrixResult/scalarResult, so it is
 // not part of the trySymbolicOperation flow above.
-// ------------------------------------------------------------
 
 /**
  * (A - λI)'nin (2x2, tek satırı bilinen λ için) null uzayından bir taban
@@ -1233,11 +1196,6 @@ function computeEigen2x2(matrixA: MatrixData, inputs: SymbolicInputs, lang: Lang
   };
 }
 
-// ------------------------------------------------------------
-// İkinci derece genişleme (a + b·s, s² = Δ) ile KARMAŞIK özdeğerler ve
-// karekökü sadeleşmeyen ("opak") gerçel özdeğerler — bkz. quadExt.ts
-// ------------------------------------------------------------
-
 /** A·v = λ·v'nin sayısal (ondalık) sağlaması; s'nin cisim dışı olduğu varsayımına karşı emniyet. */
 function extResidualOk(A: SymMatrix, ctx: QuadCtx, lam: Ext, v: Ext[]): boolean {
   const An = A.map((row) => row.map(symToNumber));
@@ -1251,7 +1209,6 @@ function extResidualOk(A: SymMatrix, ctx: QuadCtx, lam: Ext, v: Ext[]): boolean 
       re += An[i][j] * vn[j].re;
       im += An[i][j] * vn[j].im;
     }
-    // (l·v_i)
     const lr = l.re * vn[i].re - l.im * vn[i].im;
     const li = l.re * vn[i].im + l.im * vn[i].re;
     if (Math.hypot(re - lr, im - li) > 1e-7 * (1 + cabs(l)) * scale) return false;
@@ -1268,7 +1225,6 @@ interface QuadEigenEntry {
   vec: Ext[];
 }
 
-/** QuadEigenEntry listesinden OperationResult (eigenResult + sayılar/etiketler) üretir. */
 function quadEigenResult(ctx: QuadCtx, entries: QuadEigenEntry[], complex: boolean, mode: Mode, steps: SolutionStep[]): OperationResult {
   checkTerms([entries.map((e) => e.lam.a), entries.map((e) => e.lam.b)]);
   if (extTermCount(entries.flatMap((e) => e.vec)) > MAX_RESULT_TERMS * 3) noSym();
@@ -1289,7 +1245,6 @@ function quadEigenResult(ctx: QuadCtx, entries: QuadEigenEntry[], complex: boole
   };
 }
 
-/** Karmaşık / opak-karekök özdeğerin açıklama metni. */
 function quadNote(ctx: QuadCtx, complex: boolean, exactSqrt: boolean, lang: LanguageCode): string {
   if (complex && exactSqrt) {
     return T(lang, 'Δ < 0 olduğundan özdeğerler karmaşık eşlenik çifttir: λ = (İz ± i·√(−Δ)) / 2.', 'Since Δ < 0 the eigenvalues are a complex conjugate pair: λ = (trace ± i·√(−Δ)) / 2.');
@@ -1361,9 +1316,6 @@ function quadEigen2x2(
   return quadEigenResult(ctx, [{ lam: lam1, vec: v1 }, { lam: lam2, vec: v2 }], complex, mode, steps);
 }
 
-// ------------------------------------------------------------
-// 3x3 ÖZDEĞER/ÖZVEKTÖR
-// ------------------------------------------------------------
 // Özdeğerler iki yoldan biriyle KESİN (tam sembolik) bulunur:
 //   (a) Matris üçgense: özdeğerler köşegen elemanlarıdır.
 //   (b) Genel matris: karakteristik polinom p(λ) = λ³ − t·λ² + c₂·λ − d
@@ -1415,8 +1367,6 @@ function triangularNullVector(shifted: SymMatrix, isUpper: boolean, k: number): 
   return v;
 }
 
-// ---------- Yardımcılar: tam kök arama ----------
-
 const symLenOf = (v: SymNum[]) => v.reduce((sum, x) => sum + symToString(x, 'fraction').length, 0);
 const termCountOf = (v: SymNum[]) => v.reduce((sum, x) => sum + x.length, 0);
 const isRationalSym = (x: SymNum) => x.length === 0 || (x.length === 1 && x[0].p === 0 && x[0].r === 1);
@@ -1449,7 +1399,6 @@ function approxRational(x: number, maxDen = 360, tol = 1e-9): [number, number] |
   return null;
 }
 
-/** Kare-çarpansız pozitif tam sayının asal çarpanları. */
 function primeFactors(n: number): number[] {
   const out: number[] = [];
   let rem = n;
@@ -1513,10 +1462,6 @@ interface CubicSolution {
   quadRoots: [SymNum, SymNum];
 }
 
-/**
- * Genel 3x3 için karakteristik polinomun üç kökünü TAM olarak bulmaya çalışır
- * (bkz. bölüm başlığı). Bulunamazsa null.
- */
 function solveCubicExact(A: SymMatrix): CubicSolution | null {
   const a = A;
   const t = symAdd(symAdd(a[0][0], a[1][1]), a[2][2]);
@@ -1626,8 +1571,6 @@ function solveCubicExact(A: SymMatrix): CubicSolution | null {
   checkTerms([lambdas]);
   return { lambdas, t, c2, d, root, u, w, disc, quadRoots: [l2, l3] };
 }
-
-// ---------- Yardımcılar: bölmesiz özuzay tabanı ----------
 
 function crossSym(u: SymNum[], v: SymNum[]): SymNum[] {
   const c = (a: SymNum, b: SymNum, e: SymNum, f: SymNum) => symSub(symMul(a, b), symMul(e, f));
@@ -1833,7 +1776,6 @@ function computeEigen3x3(matrixA: MatrixData, inputs: SymbolicInputs, lang: Lang
     },
   ];
 
-  // ---- Özdeğerler ----
   let lambdas: SymNum[];
   if (triangular) {
     lambdas = [A[0][0], A[1][1], A[2][2]];
@@ -1875,7 +1817,6 @@ function computeEigen3x3(matrixA: MatrixData, inputs: SymbolicInputs, lang: Lang
     });
   }
 
-  // ---- Özdeğerleri (kesin eşitlikle) grupla ----
   const groups: { value: SymNum; idxs: number[] }[] = [];
   lambdas.forEach((l, i) => {
     const g = groups.find((gr) => symIsZero(symSub(gr.value, l)));
@@ -1883,7 +1824,6 @@ function computeEigen3x3(matrixA: MatrixData, inputs: SymbolicInputs, lang: Lang
     else groups.push({ value: l, idxs: [i] });
   });
 
-  // ---- Özvektörler ----
   const vectors: SymNum[][] = new Array(3);
   const notes: string[] = [];
   for (const g of groups) {

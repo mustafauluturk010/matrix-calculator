@@ -62,7 +62,6 @@ describe('Karmaşık motor: rastgele tutarlılık (sayısal doğrulama)', () => 
       const B = mat(n, n);
       const An = parseM(A), Bn = parseM(B);
 
-      // çarpma
       const rm = run('multiply', A, { B });
       expect(rm.success).toBe(true);
       const P = matMul(An, Bn);
@@ -72,7 +71,6 @@ describe('Karmaşık motor: rastgele tutarlılık (sayısal doğrulama)', () => 
       }));
       stats.mul++;
 
-      // determinant
       const dt = run('determinant', A);
       const dz = pz(dt.scalarResultLabel!);
       const dref = detN(An);
@@ -103,7 +101,6 @@ describe('Karmaşık motor: rastgele tutarlılık (sayısal doğrulama)', () => 
         stats.solve++;
       }
 
-      // kuvvet
       const rp = run('power', A, { exponent: 3 });
       const A3 = matMul(matMul(An, An), An);
       rp.matrixResultLabels!.forEach((row, i) => row.forEach((lab, j) => {
