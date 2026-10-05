@@ -122,7 +122,7 @@ export const translations = {
     complexClearedDesc: 'Karmaşık sayı modu kapatıldı. Sanal birim (i) içeren hücreler, yanlış sonuç vermemesi için sıfırlandı.',
     numberDisplayDecimal: 'Ondalık (1.5)',
     numberDisplayFraction: 'Kesirli (3/2)',
-    aboutApp: 'Matris Hesaplama Makinesi v1.0.1\nToplama, çıkarma, çarpım, determinant, ters matris, özdeğer/özvektör, LU ayrıştırması ve doğrusal denklem sistemleri dahil kapsamlı matris işlemleri.',
+    aboutApp: 'Matris Hesaplama Makinesi v1.0.2\nToplama, çıkarma, çarpım, determinant, ters matris, özdeğer/özvektör, LU ayrıştırması ve doğrusal denklem sistemleri dahil kapsamlı matris işlemleri.',
 
     saveMatrixTitle: 'Matrisi Kaydet',
     saveMatrixBtn: 'Kaydet',
@@ -305,7 +305,7 @@ export const translations = {
     complexClearedDesc: 'Complex number mode was turned off. Cells containing the imaginary unit (i) were reset so they don\'t silently produce wrong results.',
     numberDisplayDecimal: 'Decimal (1.5)',
     numberDisplayFraction: 'Fraction (3/2)',
-    aboutApp: 'Matrix Calculator v1.0.1\nA comprehensive matrix toolkit including addition, subtraction, multiplication, determinant, inverse, eigenvalues/eigenvectors, LU decomposition, and linear system solving.',
+    aboutApp: 'Matrix Calculator v1.0.2\nA comprehensive matrix toolkit including addition, subtraction, multiplication, determinant, inverse, eigenvalues/eigenvectors, LU decomposition, and linear system solving.',
 
     saveMatrixTitle: 'Save Matrix',
     saveMatrixBtn: 'Save',

@@ -21,7 +21,7 @@ function summarizeResult(entry: HistoryEntry, t: (k: any) => string, mode: Numbe
   if (r.matrixResult) return `${r.matrixResult.length}x${r.matrixResult[0].length}`;
   if (r.eigenResult) {
     const eigenResult = r.eigenResult;
-    const lambdas = `λ = [${(eigenResult.radicalExpressions ?? eigenResult.eigenvalues.map(fmtR)).join(', ')}]`;
+    const lambdas = `λ = [${eigenResult.eigenvalues.map((v, i) => eigenResult.radicalExpressions?.[i] ?? fmtR(v)).join(', ')}]`;
     const vecs = eigenResult.eigenvectors
       .map((v, i) => `v${i + 1}=[${(eigenResult.eigenvectorRadicals?.[i] ?? v.map(fmtR)).join(',')}]`)
       .join(' ');

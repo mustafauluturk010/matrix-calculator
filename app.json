@@ -2,7 +2,7 @@
   "expo": {
     "name": "Matris Hesaplama Makinesi",
     "slug": "matrishesap",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
@@ -20,11 +20,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mustafa.hesap",
-      "buildNumber": "1.0.1"
+      "buildNumber": "1.0.2"
     },
     "android": {
       "package": "com.mustafa.hesap",
-      "versionCode": 1002,
+      "versionCode": 1003,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F3F1EC"
